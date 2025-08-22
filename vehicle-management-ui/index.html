@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>车辆管理系统 - UI原型展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        },
+                        gray: {
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .prototype-container {
+            height: 800px;
+            border: 2px solid #374151;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            background-color: #1f2937;
+        }
+        .prototype-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        .prototype-section {
+            margin-bottom: 3rem;
+        }
+        /* 确保iframe内容正确加载 */
+        iframe {
+            background-color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gray-800 border-b border-gray-700 py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">车辆管理系统</h1>
+                        <p class="text-gray-400 mt-1">高保真UI原型展示</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-400">技术栈: React + TypeScript + Tailwind CSS</span>
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Introduction -->
+            <div class="mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                    <h2 class="text-xl font-semibold mb-4 text-white">项目概述</h2>
+                    <p class="text-gray-300 leading-relaxed">
+                        车辆管理系统是一套面向企业单位的综合性管理平台，主要用于实现用车申请、审批流程、车辆调度、费用管理等核心功能。
+                        系统采用现代化的前后端分离架构，提供直观易用的用户界面和完善的业务流程支持。
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-primary-600 text-white text-sm rounded-full">用户管理</span>
+                        <span class="px-3 py-1 bg-primary-600 text-white text-sm rounded-full">车辆管理</span>
+                        <span class="px-3 py-1 bg-primary-600 text-white text-sm rounded-full">申请流程</span>
+                        <span class="px-3 py-1 bg-primary-600 text-white text-sm rounded-full">驾驶员管理</span>
+                        <span class="px-3 py-1 bg-primary-600 text-white text-sm rounded-full">费用管理</span>
+                        <span class="px-3 py-1 bg-primary-600 text-white text-sm rounded-full">数据统计</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prototypes Grid -->
+            <div class="space-y-12">
+                <!-- Login Page -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-sign-in-alt mr-2 text-primary-500"></i>
+                            登录页面
+                        </h3>
+                        <p class="text-gray-400">企业级登录界面，支持用户认证和权限控制</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/login.html" title="登录页面"></iframe>
+                    </div>
+                </div>
+
+                <!-- Register Page -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-user-plus mr-2 text-primary-500"></i>
+                            注册页面
+                        </h3>
+                        <p class="text-gray-400">用户注册界面，支持新用户账户创建</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/register.html" title="注册页面"></iframe>
+                    </div>
+                </div>
+
+                <!-- Dashboard -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-tachometer-alt mr-2 text-primary-500"></i>
+                            仪表板
+                        </h3>
+                        <p class="text-gray-400">数据概览、统计图表和快捷操作入口</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/dashboard.html" title="仪表板"></iframe>
+                    </div>
+                </div>
+
+                <!-- Vehicle Management -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-car mr-2 text-primary-500"></i>
+                            车辆管理
+                        </h3>
+                        <p class="text-gray-400">车辆信息管理、状态跟踪和维护记录</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/vehicles.html" title="车辆管理"></iframe>
+                    </div>
+                </div>
+
+                <!-- Application Management -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-file-alt mr-2 text-primary-500"></i>
+                            申请管理
+                        </h3>
+                        <p class="text-gray-400">用车申请、审批流程和使用记录</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/applications.html" title="申请管理"></iframe>
+                    </div>
+                </div>
+
+                <!-- Driver Management -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-user-tie mr-2 text-primary-500"></i>
+                            驾驶员管理
+                        </h3>
+                        <p class="text-gray-400">驾驶员信息、资质管理和调度安排</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/drivers.html" title="驾驶员管理"></iframe>
+                    </div>
+                </div>
+
+                <!-- Expense Management -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-calculator mr-2 text-primary-500"></i>
+                            费用管理
+                        </h3>
+                        <p class="text-gray-400">成本核算、费用审批和统计分析</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/expenses.html" title="费用管理"></iframe>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="prototype-section">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
+                            <i class="fas fa-cog mr-2 text-primary-500"></i>
+                            系统设置
+                        </h3>
+                        <p class="text-gray-400">用户权限配置和系统参数设置</p>
+                    </div>
+                    <div class="prototype-container">
+                        <iframe src="pages/settings.html" title="系统设置"></iframe>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 border-t border-gray-700 py-6 mt-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center text-gray-400">
+                    <p>车辆管理系统 UI 原型 | 使用 HTML + Tailwind CSS + FontAwesome 构建</p>
+                    <p class="mt-1 text-sm">图片来源: Unsplash | 设计风格: 现代企业级暗色主题</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

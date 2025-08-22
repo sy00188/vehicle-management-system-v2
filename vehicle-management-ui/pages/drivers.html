@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>驾驶员管理 - 车辆管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 border-r border-gray-700">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-car text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-white">车辆管理</h1>
+                        <p class="text-xs text-gray-400">管理员面板</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span>仪表板</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-car w-5"></i>
+                    <span>车辆管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span>申请管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-primary-600 text-white rounded-lg">
+                    <i class="fas fa-user-tie w-5"></i>
+                    <span>驾驶员</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-calculator w-5"></i>
+                    <span>费用管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-white">驾驶员管理</h2>
+                        <p class="text-gray-400 text-sm">管理驾驶员信息和排班安排</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Add Driver Button -->
+                        <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>添加驾驶员</span>
+                        </button>
+                        <!-- User Menu -->
+                        <div class="flex items-center space-x-3">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="User Avatar" class="w-8 h-8 rounded-full">
+                            <span class="text-white text-sm">张管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filters -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Search -->
+                    <div class="relative flex-1 min-w-64">
+                        <input type="text" placeholder="搜索驾驶员姓名、工号..." 
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有状态</option>
+                        <option value="available">空闲</option>
+                        <option value="busy">忙碌</option>
+                        <option value="off">休假</option>
+                        <option value="maintenance">培训</option>
+                    </select>
+                    
+                    <!-- License Type Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有驾照类型</option>
+                        <option value="C1">C1</option>
+                        <option value="C2">C2</option>
+                        <option value="B2">B2</option>
+                        <option value="A2">A2</option>
+                    </select>
+                    
+                    <!-- Sort -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="name">按姓名排序</option>
+                        <option value="experience">按工作年限</option>
+                        <option value="rating">按评分排序</option>
+                        <option value="tasks">按任务数量</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Driver Stats -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-white">12</p>
+                        <p class="text-gray-400 text-sm">总驾驶员</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-green-400">8</p>
+                        <p class="text-gray-400 text-sm">空闲</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-yellow-400">3</p>
+                        <p class="text-gray-400 text-sm">忙碌</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-blue-400">1</p>
+                        <p class="text-gray-400 text-sm">休假</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-primary-400">4.8</p>
+                        <p class="text-gray-400 text-sm">平均评分</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Driver List -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Driver Card 1 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start space-x-4">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="Driver" class="w-16 h-16 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-white">刘师傅</h3>
+                                    <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                        空闲
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">工号: D001 · 驾龄: 15年</p>
+                                
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">驾照类型:</span>
+                                        <span class="text-white">A2, B2</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">联系电话:</span>
+                                        <span class="text-white">138****1234</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">本月任务:</span>
+                                        <span class="text-white">18次</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">评分:</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="text-yellow-400">★★★★★</span>
+                                            <span class="text-white">4.9</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p class="text-gray-400 text-sm mb-1">当前任务:</p>
+                                    <p class="text-gray-300 text-sm">无</p>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        分配任务
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Driver Card 2 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start space-x-4">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="Driver" class="w-16 h-16 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-white">王师傅</h3>
+                                    <span class="bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                        忙碌
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">工号: D002 · 驾龄: 12年</p>
+                                
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">驾照类型:</span>
+                                        <span class="text-white">C1</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">联系电话:</span>
+                                        <span class="text-white">139****5678</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">本月任务:</span>
+                                        <span class="text-white">22次</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">评分:</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="text-yellow-400">★★★★☆</span>
+                                            <span class="text-white">4.7</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p class="text-gray-400 text-sm mb-1">当前任务:</p>
+                                    <p class="text-blue-400 text-sm">客户拜访 - 预计18:00结束</p>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 bg-gray-600 text-gray-300 px-3 py-2 rounded text-sm cursor-not-allowed">
+                                        执行中
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-phone"></i>
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Driver Card 3 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start space-x-4">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="Driver" class="w-16 h-16 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-white">李师傅</h3>
+                                    <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                        空闲
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">工号: D003 · 驾龄: 8年</p>
+                                
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">驾照类型:</span>
+                                        <span class="text-white">C1, C2</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">联系电话:</span>
+                                        <span class="text-white">137****9012</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">本月任务:</span>
+                                        <span class="text-white">15次</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">评分:</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="text-yellow-400">★★★★★</span>
+                                            <span class="text-white">4.8</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p class="text-gray-400 text-sm mb-1">当前任务:</p>
+                                    <p class="text-gray-300 text-sm">无</p>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        分配任务
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Driver Card 4 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start space-x-4">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="Driver" class="w-16 h-16 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-white">张师傅</h3>
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                        休假
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">工号: D004 · 驾龄: 20年</p>
+                                
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">驾照类型:</span>
+                                        <span class="text-white">A2, B2, C1</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">联系电话:</span>
+                                        <span class="text-white">136****3456</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">本月任务:</span>
+                                        <span class="text-white">20次</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">评分:</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="text-yellow-400">★★★★★</span>
+                                            <span class="text-white">5.0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p class="text-gray-400 text-sm mb-1">休假时间:</p>
+                                    <p class="text-blue-400 text-sm">1月25日 - 1月27日</p>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 bg-gray-600 text-gray-300 px-3 py-2 rounded text-sm cursor-not-allowed">
+                                        休假中
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Driver Card 5 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start space-x-4">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="Driver" class="w-16 h-16 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-white">赵师傅</h3>
+                                    <span class="bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                        忙碌
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">工号: D005 · 驾龄: 10年</p>
+                                
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">驾照类型:</span>
+                                        <span class="text-white">B2, C1</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">联系电话:</span>
+                                        <span class="text-white">135****7890</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">本月任务:</span>
+                                        <span class="text-white">19次</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">评分:</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="text-yellow-400">★★★★☆</span>
+                                            <span class="text-white">4.6</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p class="text-gray-400 text-sm mb-1">当前任务:</p>
+                                    <p class="text-blue-400 text-sm">银行业务 - 预计16:00结束</p>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 bg-gray-600 text-gray-300 px-3 py-2 rounded text-sm cursor-not-allowed">
+                                        执行中
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-phone"></i>
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Driver Card 6 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start space-x-4">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="Driver" class="w-16 h-16 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-white">孙师傅</h3>
+                                    <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                        空闲
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">工号: D006 · 驾龄: 6年</p>
+                                
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">驾照类型:</span>
+                                        <span class="text-white">C1</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">联系电话:</span>
+                                        <span class="text-white">134****2468</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">本月任务:</span>
+                                        <span class="text-white">16次</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">评分:</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="text-yellow-400">★★★★☆</span>
+                                            <span class="text-white">4.5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p class="text-gray-400 text-sm mb-1">当前任务:</p>
+                                    <p class="text-gray-300 text-sm">无</p>
+                                </div>
+                                
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        分配任务
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition-colors">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-8">
+                    <div class="text-gray-400 text-sm">
+                        显示 1-6 条，共 12 条记录
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-2 bg-gray-700 text-gray-400 rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-primary-600 text-white rounded-lg">1</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">2</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,378 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户表
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String
+  phone     String?
+  avatar    String?
+  role      UserRole @default(USER)
+  status    UserStatus @default(ACTIVE)
+  department String?
+  position   String?
+  lastLoginAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联关系
+  applications Application[]
+  expenses     Expense[]
+  maintenances Maintenance[]
+  notifications Notification[]
+  createdVehicles Vehicle[] @relation("VehicleCreator")
+  updatedVehicles Vehicle[] @relation("VehicleUpdater")
+  createdDrivers  Driver[]  @relation("DriverCreator")
+  updatedDrivers  Driver[]  @relation("DriverUpdater")
+
+  @@map("users")
+}
+
+// 车辆表
+model Vehicle {
+  id           String        @id @default(cuid())
+  plateNumber  String        @unique // 车牌号
+  brand        String        // 品牌
+  model        String        // 型号
+  year         Int           // 年份
+  color        String        // 颜色
+  vin          String?       @unique // 车架号
+  engineNumber String?       // 发动机号
+  fuelType     FuelType      // 燃料类型
+  seats        Int           // 座位数
+  displacement Float?        // 排量
+  mileage      Float         @default(0) // 里程数
+  status       VehicleStatus @default(AVAILABLE) // 状态
+  purchaseDate DateTime?     // 购买日期
+  purchasePrice Float?       // 购买价格
+  insuranceExpiry DateTime?  // 保险到期日期
+  inspectionExpiry DateTime? // 年检到期日期
+  description  String?       // 描述
+  images       Json?         // 图片URLs数组
+  createdById  String
+  updatedById  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // 关联关系
+  createdBy    User          @relation("VehicleCreator", fields: [createdById], references: [id])
+  updatedBy    User?         @relation("VehicleUpdater", fields: [updatedById], references: [id])
+  applications Application[]
+  maintenances Maintenance[]
+  expenses     Expense[]
+  assignments  DriverVehicleAssignment[]
+
+  @@map("vehicles")
+}
+
+// 驾驶员表
+model Driver {
+  id              String       @id @default(cuid())
+  name            String       // 姓名
+  phone           String       @unique // 电话
+  email           String?      @unique // 邮箱
+  licenseNumber   String       @unique // 驾驶证号
+  licenseType     LicenseType  // 驾驶证类型
+  licenseExpiry   DateTime     // 驾驶证到期日期
+  idCard          String       @unique // 身份证号
+  address         String?      // 地址
+  emergencyContact String?     // 紧急联系人
+  emergencyPhone  String?      // 紧急联系电话
+  status          DriverStatus @default(AVAILABLE) // 状态
+  hireDate        DateTime?    // 入职日期
+  salary          Float?       // 薪资
+  avatar          String?      // 头像
+  description     String?      // 描述
+  createdById     String
+  updatedById     String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // 关联关系
+  createdBy    User        @relation("DriverCreator", fields: [createdById], references: [id])
+  updatedBy    User?       @relation("DriverUpdater", fields: [updatedById], references: [id])
+  applications Application[]
+  assignments  DriverVehicleAssignment[]
+
+  @@map("drivers")
+}
+
+// 驾驶员车辆分配表
+model DriverVehicleAssignment {
+  id        String   @id @default(cuid())
+  driverId  String
+  vehicleId String
+  startDate DateTime
+  endDate   DateTime?
+  status    AssignmentStatus @default(ACTIVE)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联关系
+  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@unique([driverId, vehicleId, startDate])
+  @@map("driver_vehicle_assignments")
+}
+
+// 用车申请表
+model Application {
+  id          String            @id @default(cuid())
+  title       String            // 申请标题
+  purpose     String            // 用车目的
+  destination String            // 目的地
+  startTime   DateTime          // 开始时间
+  endTime     DateTime          // 结束时间
+  passengers  Int               @default(1) // 乘车人数
+  status      ApplicationStatus @default(PENDING) // 申请状态
+  priority    Priority          @default(NORMAL) // 优先级
+  notes       String?           // 备注
+  approvalNotes String?         // 审批意见
+  approvedAt  DateTime?         // 审批时间
+  rejectedAt  DateTime?         // 拒绝时间
+  completedAt DateTime?         // 完成时间
+  actualStartTime DateTime?     // 实际开始时间
+  actualEndTime   DateTime?     // 实际结束时间
+  actualMileage   Float?        // 实际里程
+  fuelCost        Float?        // 燃油费用
+  applicantId String
+  vehicleId   String?
+  driverId    String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // 关联关系
+  applicant User     @relation(fields: [applicantId], references: [id])
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+  driver    Driver?  @relation(fields: [driverId], references: [id])
+  expenses  Expense[]
+
+  @@map("applications")
+}
+
+// 维护记录表
+model Maintenance {
+  id          String            @id @default(cuid())
+  title       String            // 维护标题
+  type        MaintenanceType   // 维护类型
+  description String            // 描述
+  cost        Float             // 费用
+  mileage     Float?            // 维护时里程数
+  status      MaintenanceStatus @default(PENDING) // 状态
+  priority    Priority          @default(NORMAL) // 优先级
+  scheduledDate DateTime         // 计划日期
+  completedDate DateTime?       // 完成日期
+  vendor      String?           // 维修厂商
+  vendorContact String?         // 厂商联系方式
+  warranty    Int?              // 保修期（天）
+  notes       String?           // 备注
+  attachments Json?             // 附件URLs数组
+  vehicleId   String
+  createdById String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // 关联关系
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id])
+
+  @@map("maintenances")
+}
+
+// 费用记录表
+model Expense {
+  id            String      @id @default(cuid())
+  title         String      // 费用标题
+  type          ExpenseType // 费用类型
+  amount        Float       // 金额
+  description   String?     // 描述
+  date          DateTime    // 费用日期
+  vendor        String?     // 供应商
+  invoiceNumber String?     // 发票号
+  receipt       String?     // 收据URL
+  status        ExpenseStatus @default(PENDING) // 状态
+  notes         String?     // 备注
+  vehicleId     String?
+  applicationId String?
+  createdById   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // 关联关系
+  vehicle     Vehicle?     @relation(fields: [vehicleId], references: [id])
+  application Application? @relation(fields: [applicationId], references: [id])
+  createdBy   User         @relation(fields: [createdById], references: [id])
+
+  @@map("expenses")
+}
+
+// 系统设置表
+model Setting {
+  id          String      @id @default(cuid())
+  key         String      @unique // 设置键
+  value       String      // 设置值
+  type        SettingType @default(STRING) // 值类型
+  category    String      @default("general") // 分类
+  description String?     // 描述
+  isPublic    Boolean     @default(false) // 是否公开
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("settings")
+}
+
+// 枚举定义
+enum UserRole {
+  ADMIN      // 管理员
+  MANAGER    // 经理
+  USER       // 普通用户
+  DRIVER     // 驾驶员
+}
+
+enum UserStatus {
+  ACTIVE     // 活跃
+  INACTIVE   // 非活跃
+  SUSPENDED  // 暂停
+}
+
+enum VehicleStatus {
+  AVAILABLE    // 可用
+  IN_USE       // 使用中
+  MAINTENANCE  // 维护中
+  RETIRED      // 已退役
+}
+
+enum FuelType {
+  GASOLINE     // 汽油
+  DIESEL       // 柴油
+  ELECTRIC     // 电动
+  HYBRID       // 混合动力
+  CNG          // 压缩天然气
+}
+
+enum DriverStatus {
+  AVAILABLE    // 可用
+  BUSY         // 忙碌
+  ON_LEAVE     // 请假
+  INACTIVE     // 非活跃
+}
+
+enum LicenseType {
+  A1   // 大型客车
+  A2   // 牵引车
+  A3   // 城市公交车
+  B1   // 中型客车
+  B2   // 大型货车
+  C1   // 小型汽车
+  C2   // 小型自动挡汽车
+  C3   // 低速载货汽车
+  C4   // 三轮汽车
+  D    // 普通三轮摩托车
+  E    // 普通二轮摩托车
+  F    // 轻便摩托车
+  M    // 轮式自行机械车
+  N    // 无轨电车
+  P    // 有轨电车
+}
+
+enum AssignmentStatus {
+  ACTIVE       // 活跃
+  COMPLETED    // 已完成
+  CANCELLED    // 已取消
+}
+
+enum ApplicationStatus {
+  PENDING      // 待审批
+  APPROVED     // 已批准
+  REJECTED     // 已拒绝
+  IN_PROGRESS  // 进行中
+  COMPLETED    // 已完成
+  CANCELLED    // 已取消
+}
+
+enum Priority {
+  LOW          // 低
+  NORMAL       // 普通
+  HIGH         // 高
+  URGENT       // 紧急
+}
+
+enum MaintenanceType {
+  ROUTINE      // 例行保养
+  REPAIR       // 维修
+  INSPECTION   // 检查
+  EMERGENCY    // 紧急维修
+  UPGRADE      // 升级改装
+}
+
+enum MaintenanceStatus {
+  PENDING      // 待处理
+  IN_PROGRESS  // 进行中
+  COMPLETED    // 已完成
+  CANCELLED    // 已取消
+}
+
+enum ExpenseType {
+  FUEL         // 燃油费
+  MAINTENANCE  // 维护费
+  INSURANCE    // 保险费
+  REGISTRATION // 注册费
+  PARKING      // 停车费
+  TOLL         // 过路费
+  FINE         // 罚款
+  OTHER        // 其他
+}
+
+enum ExpenseStatus {
+  PENDING      // 待审核
+  APPROVED     // 已批准
+  REJECTED     // 已拒绝
+  PAID         // 已支付
+}
+
+enum SettingType {
+  STRING       // 字符串
+  NUMBER       // 数字
+  BOOLEAN      // 布尔值
+  JSON         // JSON对象
+}
+
+// 通知表
+model Notification {
+  id          String           @id @default(cuid())
+  type        NotificationType // 通知类型
+  title       String           // 通知标题
+  message     String?          // 通知内容
+  userId      String           // 接收用户ID
+  read        Boolean          @default(false) // 是否已读
+  relatedId   String?          // 关联业务ID
+  relatedType String?          // 关联业务类型
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // 关联关系
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  SUCCESS      // 成功
+  ERROR        // 错误
+  WARNING      // 警告
+  INFO         // 信息
+}

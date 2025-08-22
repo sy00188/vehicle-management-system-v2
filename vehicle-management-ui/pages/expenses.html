@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>费用管理 - 车辆管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../assets/js/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 border-r border-gray-700">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-car text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-white">车辆管理</h1>
+                        <p class="text-xs text-gray-400">管理员面板</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span>仪表板</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-car w-5"></i>
+                    <span>车辆管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span>申请管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-user-tie w-5"></i>
+                    <span>驾驶员</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-primary-600 text-white rounded-lg">
+                    <i class="fas fa-calculator w-5"></i>
+                    <span>费用管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-white">费用管理</h2>
+                        <p class="text-gray-400 text-sm">管理车辆相关费用和报销申请</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Add Expense Button -->
+                        <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>新增费用</span>
+                        </button>
+                        <!-- Export Button -->
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-download"></i>
+                            <span>导出报表</span>
+                        </button>
+                        <!-- User Menu -->
+                        <div class="flex items-center space-x-3">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="User Avatar" class="w-8 h-8 rounded-full">
+                            <span class="text-white text-sm">张管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Expense Stats -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">本月总支出</p>
+                                <p class="text-2xl font-bold text-white">¥45,680</p>
+                                <p class="text-green-400 text-sm mt-1">
+                                    <i class="fas fa-arrow-down"></i> 比上月减少 8.2%
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-money-bill-wave text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">燃油费用</p>
+                                <p class="text-2xl font-bold text-white">¥18,450</p>
+                                <p class="text-red-400 text-sm mt-1">
+                                    <i class="fas fa-arrow-up"></i> 比上月增加 5.1%
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-gas-pump text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">维修保养</p>
+                                <p class="text-2xl font-bold text-white">¥12,800</p>
+                                <p class="text-yellow-400 text-sm mt-1">
+                                    <i class="fas fa-minus"></i> 与上月持平
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-wrench text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">待审核费用</p>
+                                <p class="text-2xl font-bold text-white">¥8,920</p>
+                                <p class="text-blue-400 text-sm mt-1">
+                                    <i class="fas fa-clock"></i> 15笔待处理
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-hourglass-half text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Monthly Expense Trend -->
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">月度费用趋势</h3>
+                        <div id="monthlyExpenseChart" style="height: 300px;"></div>
+                    </div>
+                    
+                    <!-- Expense Category Distribution -->
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">费用类别分布</h3>
+                        <div id="expenseCategoryChart" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Date Range -->
+                    <div class="flex items-center space-x-2">
+                        <label class="text-gray-400 text-sm">时间范围:</label>
+                        <input type="date" value="2024-01-01" 
+                               class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <span class="text-gray-400">至</span>
+                        <input type="date" value="2024-01-31" 
+                               class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    
+                    <!-- Category Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有类别</option>
+                        <option value="fuel">燃油费</option>
+                        <option value="maintenance">维修保养</option>
+                        <option value="insurance">保险费</option>
+                        <option value="parking">停车费</option>
+                        <option value="toll">过路费</option>
+                        <option value="other">其他</option>
+                    </select>
+                    
+                    <!-- Status Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有状态</option>
+                        <option value="pending">待审核</option>
+                        <option value="approved">已批准</option>
+                        <option value="rejected">已拒绝</option>
+                        <option value="paid">已支付</option>
+                    </select>
+                    
+                    <!-- Vehicle Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有车辆</option>
+                        <option value="京A12345">京A12345</option>
+                        <option value="京B67890">京B67890</option>
+                        <option value="京C11111">京C11111</option>
+                    </select>
+                    
+                    <!-- Search -->
+                    <div class="relative flex-1 min-w-64">
+                        <input type="text" placeholder="搜索费用描述、申请人..." 
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expense List -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="space-y-4">
+                    <!-- Expense Item 1 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-gas-pump text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <h3 class="text-lg font-semibold text-white">燃油费用</h3>
+                                        <span class="bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                            待审核
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mb-3">车辆: 京A12345 · 申请人: 李明 · 申请时间: 2024-01-25 14:30</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <p class="text-gray-400 text-sm">费用金额</p>
+                                            <p class="text-white font-semibold">¥450.00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">加油站</p>
+                                            <p class="text-white">中石化朝阳路站</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">里程数</p>
+                                            <p class="text-white">45.2L</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 text-sm mb-4">
+                                        <strong>说明:</strong> 客户拜访途中加油，发票已上传
+                                    </p>
+                                    
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <i class="fas fa-paperclip text-gray-400"></i>
+                                        <span class="text-blue-400 text-sm hover:underline cursor-pointer">加油发票.jpg</span>
+                                        <span class="text-gray-400 text-sm">(245KB)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    批准
+                                </button>
+                                <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    拒绝
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expense Item 2 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-wrench text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <h3 class="text-lg font-semibold text-white">维修费用</h3>
+                                        <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                            已批准
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mb-3">车辆: 京B67890 · 申请人: 王强 · 申请时间: 2024-01-24 09:15</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <p class="text-gray-400 text-sm">费用金额</p>
+                                            <p class="text-white font-semibold">¥1,280.00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">维修店</p>
+                                            <p class="text-white">汽车维修中心</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">维修项目</p>
+                                            <p class="text-white">更换刹车片</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 text-sm mb-4">
+                                        <strong>说明:</strong> 定期保养检查发现刹车片磨损严重，已更换
+                                    </p>
+                                    
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <i class="fas fa-paperclip text-gray-400"></i>
+                                        <span class="text-blue-400 text-sm hover:underline cursor-pointer">维修发票.pdf</span>
+                                        <span class="text-gray-400 text-sm">(1.2MB)</span>
+                                        <span class="text-blue-400 text-sm hover:underline cursor-pointer">维修报告.pdf</span>
+                                        <span class="text-gray-400 text-sm">(856KB)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    支付
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expense Item 3 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-parking text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <h3 class="text-lg font-semibold text-white">停车费</h3>
+                                        <span class="bg-gray-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                            已支付
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mb-3">车辆: 京C11111 · 申请人: 张华 · 申请时间: 2024-01-23 16:45</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <p class="text-gray-400 text-sm">费用金额</p>
+                                            <p class="text-white font-semibold">¥25.00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">停车场</p>
+                                            <p class="text-white">国贸停车场</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">停车时长</p>
+                                            <p class="text-white">5小时</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 text-sm mb-4">
+                                        <strong>说明:</strong> 客户会议期间停车费用
+                                    </p>
+                                    
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <i class="fas fa-paperclip text-gray-400"></i>
+                                        <span class="text-blue-400 text-sm hover:underline cursor-pointer">停车票.jpg</span>
+                                        <span class="text-gray-400 text-sm">(156KB)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <button class="bg-gray-600 text-gray-300 px-4 py-2 rounded-lg text-sm cursor-not-allowed">
+                                    已完成
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expense Item 4 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 p-6 hover:border-primary-500 transition-colors">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-road text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <h3 class="text-lg font-semibold text-white">过路费</h3>
+                                        <span class="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                            已拒绝
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mb-3">车辆: 京A12345 · 申请人: 刘洋 · 申请时间: 2024-01-22 11:20</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <p class="text-gray-400 text-sm">费用金额</p>
+                                            <p class="text-white font-semibold">¥85.00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">路段</p>
+                                            <p class="text-white">京沪高速</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 text-sm">里程</p>
+                                            <p class="text-white">120公里</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 text-sm mb-2">
+                                        <strong>说明:</strong> 私人事务使用公车产生的过路费
+                                    </p>
+                                    <p class="text-red-400 text-sm mb-4">
+                                        <strong>拒绝原因:</strong> 非公务用车，不予报销
+                                    </p>
+                                    
+                                    <div class="flex items-center space-x-2 mb-4">
+                                        <i class="fas fa-paperclip text-gray-400"></i>
+                                        <span class="text-blue-400 text-sm hover:underline cursor-pointer">过路费发票.jpg</span>
+                                        <span class="text-gray-400 text-sm">(198KB)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                                    详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-8">
+                    <div class="text-gray-400 text-sm">
+                        显示 1-4 条，共 28 条记录
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-2 bg-gray-700 text-gray-400 rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-primary-600 text-white rounded-lg">1</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">2</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">3</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Monthly Expense Trend Chart
+        const monthlyChart = echarts.init(document.getElementById('monthlyExpenseChart'), 'dark');
+        const monthlyOption = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: '#374151',
+                borderColor: '#6B7280',
+                textStyle: { color: '#F9FAFB' }
+            },
+            legend: {
+                data: ['燃油费', '维修费', '保险费', '其他'],
+                textStyle: { color: '#D1D5DB' }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['7月', '8月', '9月', '10月', '11月', '12月', '1月'],
+                axisLine: { lineStyle: { color: '#6B7280' } },
+                axisLabel: { color: '#D1D5DB' }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: { lineStyle: { color: '#6B7280' } },
+                axisLabel: { color: '#D1D5DB' },
+                splitLine: { lineStyle: { color: '#374151' } }
+            },
+            series: [
+                {
+                    name: '燃油费',
+                    type: 'line',
+                    data: [15200, 16800, 14500, 17200, 16900, 18200, 18450],
+                    smooth: true,
+                    itemStyle: { color: '#F59E0B' }
+                },
+                {
+                    name: '维修费',
+                    type: 'line',
+                    data: [8500, 12300, 9800, 11200, 10500, 13800, 12800],
+                    smooth: true,
+                    itemStyle: { color: '#3B82F6' }
+                },
+                {
+                    name: '保险费',
+                    type: 'line',
+                    data: [5200, 5200, 5200, 5200, 5200, 5200, 5200],
+                    smooth: true,
+                    itemStyle: { color: '#10B981' }
+                },
+                {
+                    name: '其他',
+                    type: 'line',
+                    data: [2800, 3200, 2900, 3500, 3100, 3800, 3230],
+                    smooth: true,
+                    itemStyle: { color: '#8B5CF6' }
+                }
+            ]
+        };
+        monthlyChart.setOption(monthlyOption);
+
+        // Expense Category Distribution Chart
+        const categoryChart = echarts.init(document.getElementById('expenseCategoryChart'), 'dark');
+        const categoryOption = {
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: '#374151',
+                borderColor: '#6B7280',
+                textStyle: { color: '#F9FAFB' }
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                textStyle: { color: '#D1D5DB' }
+            },
+            series: [
+                {
+                    name: '费用分布',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [
+                        { value: 18450, name: '燃油费', itemStyle: { color: '#F59E0B' } },
+                        { value: 12800, name: '维修保养', itemStyle: { color: '#3B82F6' } },
+                        { value: 5200, name: '保险费', itemStyle: { color: '#10B981' } },
+                        { value: 4230, name: '停车费', itemStyle: { color: '#8B5CF6' } },
+                        { value: 3200, name: '过路费', itemStyle: { color: '#EF4444' } },
+                        { value: 1800, name: '其他', itemStyle: { color: '#6B7280' } }
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        categoryChart.setOption(categoryOption);
+
+        // Responsive charts
+        window.addEventListener('resize', function() {
+            monthlyChart.resize();
+            categoryChart.resize();
+        });
+    </script>
+</body>
+</html>

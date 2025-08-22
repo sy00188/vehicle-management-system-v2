@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 车辆管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 border-r border-gray-700">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-car text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-white">车辆管理</h1>
+                        <p class="text-xs text-gray-400">管理员面板</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span>仪表板</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-car w-5"></i>
+                    <span>车辆管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span>申请管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-user-tie w-5"></i>
+                    <span>驾驶员</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-calculator w-5"></i>
+                    <span>费用管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-primary-600 text-white rounded-lg">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-white">系统设置</h2>
+                        <p class="text-gray-400 text-sm">管理系统配置和用户权限</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Save Button -->
+                        <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-save"></i>
+                            <span>保存设置</span>
+                        </button>
+                        <!-- User Menu -->
+                        <div class="flex items-center space-x-3">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="User Avatar" class="w-8 h-8 rounded-full">
+                            <span class="text-white text-sm">张管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Navigation Tabs -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6">
+                <nav class="flex space-x-8">
+                    <button class="py-4 px-2 border-b-2 border-primary-600 text-primary-600 font-medium text-sm" data-tab="users">
+                        用户管理
+                    </button>
+                    <button class="py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-gray-300 font-medium text-sm" data-tab="permissions">
+                        权限配置
+                    </button>
+                    <button class="py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-gray-300 font-medium text-sm" data-tab="system">
+                        系统参数
+                    </button>
+                    <button class="py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-gray-300 font-medium text-sm" data-tab="backup">
+                        备份恢复
+                    </button>
+                    <button class="py-4 px-2 border-b-2 border-transparent text-gray-400 hover:text-gray-300 font-medium text-sm" data-tab="logs">
+                        系统日志
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Users Management Tab -->
+                <div id="users-tab" class="tab-content">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white">用户管理</h3>
+                            <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>添加用户</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Search and Filter -->
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="relative flex-1">
+                                <input type="text" placeholder="搜索用户名、姓名、邮箱..." 
+                                       class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="">所有角色</option>
+                                <option value="admin">管理员</option>
+                                <option value="manager">部门经理</option>
+                                <option value="driver">驾驶员</option>
+                                <option value="user">普通用户</option>
+                            </select>
+                            <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="">所有状态</option>
+                                <option value="active">启用</option>
+                                <option value="inactive">禁用</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Users Table -->
+                        <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+                            <table class="w-full">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">用户</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">角色</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">部门</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">状态</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">最后登录</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr class="hover:bg-gray-700">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
+                                                     alt="Avatar" class="w-10 h-10 rounded-full">
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-white">张管理员</div>
+                                                    <div class="text-sm text-gray-400">admin@company.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">管理员</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">信息技术部</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">启用</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 14:30</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex space-x-2">
+                                                <button class="text-blue-400 hover:text-blue-300">编辑</button>
+                                                <button class="text-yellow-400 hover:text-yellow-300">重置密码</button>
+                                                <button class="text-red-400 hover:text-red-300">禁用</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
+                                                     alt="Avatar" class="w-10 h-10 rounded-full">
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-white">李经理</div>
+                                                    <div class="text-sm text-gray-400">manager@company.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">部门经理</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">销售部</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">启用</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 09:15</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex space-x-2">
+                                                <button class="text-blue-400 hover:text-blue-300">编辑</button>
+                                                <button class="text-yellow-400 hover:text-yellow-300">重置密码</button>
+                                                <button class="text-red-400 hover:text-red-300">禁用</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <img src="../assets/images/placeholder-avatar.svg" 
+                                                     alt="Avatar" class="w-10 h-10 rounded-full">
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-white">王师傅</div>
+                                                    <div class="text-sm text-gray-400">driver@company.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">驾驶员</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">车队</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">启用</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-24 18:45</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex space-x-2">
+                                                <button class="text-blue-400 hover:text-blue-300">编辑</button>
+                                                <button class="text-yellow-400 hover:text-yellow-300">重置密码</button>
+                                                <button class="text-red-400 hover:text-red-300">禁用</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Tab -->
+                <div id="permissions-tab" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">权限配置</h3>
+                        
+                        <!-- Role Selection -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">选择角色</label>
+                            <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="admin">管理员</option>
+                                <option value="manager">部门经理</option>
+                                <option value="driver">驾驶员</option>
+                                <option value="user">普通用户</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Permissions Matrix -->
+                        <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                            <h4 class="text-md font-semibold text-white mb-4">权限矩阵 - 管理员</h4>
+                            
+                            <div class="space-y-6">
+                                <!-- Vehicle Management -->
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-300 mb-3">车辆管理</h5>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">查看车辆</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">添加车辆</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">编辑车辆</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">删除车辆</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Application Management -->
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-300 mb-3">申请管理</h5>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">查看申请</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">审批申请</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">创建申请</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">取消申请</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Driver Management -->
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-300 mb-3">驾驶员管理</h5>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">查看驾驶员</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">添加驾驶员</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">编辑驾驶员</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">分配任务</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Expense Management -->
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-300 mb-3">费用管理</h5>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">查看费用</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">审批费用</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">导出报表</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">财务分析</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- System Settings -->
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-300 mb-3">系统设置</h5>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">用户管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">权限配置</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">系统参数</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2">
+                                            <input type="checkbox" checked class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                            <span class="text-sm text-gray-300">备份恢复</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Parameters Tab -->
+                <div id="system-tab" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">系统参数</h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- General Settings -->
+                            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                                <h4 class="text-md font-semibold text-white mb-4">基本设置</h4>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">系统名称</label>
+                                        <input type="text" value="车辆管理系统" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">公司名称</label>
+                                        <input type="text" value="某某科技有限公司" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">联系电话</label>
+                                        <input type="text" value="400-123-4567" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">公司地址</label>
+                                        <textarea rows="3" 
+                                                  class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">北京市朝阳区某某大厦1001室</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Application Settings -->
+                            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                                <h4 class="text-md font-semibold text-white mb-4">申请设置</h4>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">申请提前时间（小时）</label>
+                                        <input type="number" value="2" min="1" max="72" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">最大申请天数</label>
+                                        <input type="number" value="30" min="1" max="365" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">自动审批金额上限（元）</label>
+                                        <input type="number" value="500" min="0" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">启用短信通知</label>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">启用邮件通知</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Vehicle Settings -->
+                            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                                <h4 class="text-md font-semibold text-white mb-4">车辆设置</h4>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">保养提醒里程（公里）</label>
+                                        <input type="number" value="5000" min="1000" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">年检提醒天数</label>
+                                        <input type="number" value="30" min="1" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">保险到期提醒天数</label>
+                                        <input type="number" value="30" min="1" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">启用GPS定位</label>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">启用油耗监控</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Security Settings -->
+                            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                                <h4 class="text-md font-semibold text-white mb-4">安全设置</h4>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">密码最小长度</label>
+                                        <input type="number" value="8" min="6" max="20" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">登录失败锁定次数</label>
+                                        <input type="number" value="5" min="3" max="10" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">会话超时时间（分钟）</label>
+                                        <input type="number" value="30" min="10" max="480" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">启用双因子认证</label>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">记录操作日志</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup Tab -->
+                <div id="backup-tab" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">备份恢复</h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Backup Settings -->
+                            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                                <h4 class="text-md font-semibold text-white mb-4">备份设置</h4>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">自动备份频率</label>
+                                        <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                            <option value="daily">每日</option>
+                                            <option value="weekly">每周</option>
+                                            <option value="monthly">每月</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">备份时间</label>
+                                        <input type="time" value="02:00" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">保留备份数量</label>
+                                        <input type="number" value="7" min="1" max="30" 
+                                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" checked 
+                                               class="rounded bg-gray-700 border-gray-600 text-primary-600 focus:ring-primary-500">
+                                        <label class="text-sm text-gray-300">启用自动备份</label>
+                                    </div>
+                                    
+                                    <button class="w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                        立即备份
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Backup History -->
+                            <div class="bg-gray-800 rounded-lg border border-gray-700 p-6">
+                                <h4 class="text-md font-semibold text-white mb-4">备份历史</h4>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                        <div>
+                                            <p class="text-white text-sm font-medium">backup_2024-01-25_02-00.sql</p>
+                                            <p class="text-gray-400 text-xs">2024-01-25 02:00:15 · 45.2MB</p>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-400 hover:text-blue-300 text-sm">下载</button>
+                                            <button class="text-green-400 hover:text-green-300 text-sm">恢复</button>
+                                            <button class="text-red-400 hover:text-red-300 text-sm">删除</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                        <div>
+                                            <p class="text-white text-sm font-medium">backup_2024-01-24_02-00.sql</p>
+                                            <p class="text-gray-400 text-xs">2024-01-24 02:00:12 · 44.8MB</p>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-400 hover:text-blue-300 text-sm">下载</button>
+                                            <button class="text-green-400 hover:text-green-300 text-sm">恢复</button>
+                                            <button class="text-red-400 hover:text-red-300 text-sm">删除</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                        <div>
+                                            <p class="text-white text-sm font-medium">backup_2024-01-23_02-00.sql</p>
+                                            <p class="text-gray-400 text-xs">2024-01-23 02:00:08 · 44.1MB</p>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-blue-400 hover:text-blue-300 text-sm">下载</button>
+                                            <button class="text-green-400 hover:text-green-300 text-sm">恢复</button>
+                                            <button class="text-red-400 hover:text-red-300 text-sm">删除</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs Tab -->
+                <div id="logs-tab" class="tab-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">系统日志</h3>
+                        
+                        <!-- Log Filters -->
+                        <div class="flex items-center space-x-4 mb-6">
+                            <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="">所有级别</option>
+                                <option value="info">信息</option>
+                                <option value="warning">警告</option>
+                                <option value="error">错误</option>
+                            </select>
+                            
+                            <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="">所有模块</option>
+                                <option value="auth">认证</option>
+                                <option value="vehicle">车辆</option>
+                                <option value="application">申请</option>
+                                <option value="system">系统</option>
+                            </select>
+                            
+                            <input type="date" value="2024-01-25" 
+                                   class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                清空日志
+                            </button>
+                        </div>
+                        
+                        <!-- Log Entries -->
+                        <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+                            <div class="max-h-96 overflow-y-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-700 sticky top-0">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">时间</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">级别</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">模块</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">用户</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">消息</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-700">
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 14:30:25</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">信息</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">认证</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">张管理员</td>
+                                            <td class="px-6 py-4 text-sm text-gray-300">用户登录成功</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 14:25:12</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">信息</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">申请</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">李经理</td>
+                                            <td class="px-6 py-4 text-sm text-gray-300">审批通过申请 #APP-2024-001</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 14:20:45</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">警告</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">车辆</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">系统</td>
+                                            <td class="px-6 py-4 text-sm text-gray-300">车辆 京A12345 保养里程即将到期</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 14:15:33</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">错误</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">认证</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">unknown</td>
+                                            <td class="px-6 py-4 text-sm text-gray-300">登录失败：用户名或密码错误 (IP: 192.168.1.100)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">2024-01-25 14:10:18</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">信息</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">系统</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">系统</td>
+                                            <td class="px-6 py-4 text-sm text-gray-300">数据库备份完成</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('[data-tab]');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.getAttribute('data-tab');
+                
+                // Update tab styles
+                tabs.forEach(t => {
+                    t.classList.remove('border-primary-600', 'text-primary-600');
+                    t.classList.add('border-transparent', 'text-gray-400');
+                });
+                tab.classList.remove('border-transparent', 'text-gray-400');
+                tab.classList.add('border-primary-600', 'text-primary-600');
+                
+                // Show/hide tab content
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(targetTab + '-tab').classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

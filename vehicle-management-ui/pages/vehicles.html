@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>车辆管理 - 车辆管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 border-r border-gray-700">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-car text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-white">车辆管理</h1>
+                        <p class="text-xs text-gray-400">管理员面板</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span>仪表板</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 bg-primary-600 text-white rounded-lg">
+                    <i class="fas fa-car w-5"></i>
+                    <span>车辆管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span>申请管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-user-tie w-5"></i>
+                    <span>驾驶员</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-calculator w-5"></i>
+                    <span>费用管理</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-white">车辆管理</h2>
+                        <p class="text-gray-400 text-sm">管理和监控所有车辆信息</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Add Vehicle Button -->
+                        <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>添加车辆</span>
+                        </button>
+                        <!-- User Menu -->
+                        <div class="flex items-center space-x-3">
+                            <img src="../assets/images/placeholder-avatar.svg" 
+                                 alt="User Avatar" class="w-8 h-8 rounded-full">
+                            <span class="text-white text-sm">张管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filters and Search -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Search -->
+                    <div class="relative flex-1 min-w-64">
+                        <input type="text" placeholder="搜索车牌号、品牌、型号..." 
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有状态</option>
+                        <option value="available">可用</option>
+                        <option value="in-use">使用中</option>
+                        <option value="maintenance">维护中</option>
+                        <option value="retired">已退役</option>
+                    </select>
+                    
+                    <!-- Type Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有类型</option>
+                        <option value="sedan">轿车</option>
+                        <option value="suv">SUV</option>
+                        <option value="truck">货车</option>
+                        <option value="van">面包车</option>
+                    </select>
+                    
+                    <!-- Department Filter -->
+                    <select class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option value="">所有部门</option>
+                        <option value="admin">行政部</option>
+                        <option value="sales">销售部</option>
+                        <option value="tech">技术部</option>
+                        <option value="hr">人事部</option>
+                    </select>
+                    
+                    <!-- Reset Filters -->
+                    <button class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-undo mr-1"></i>重置
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vehicle List -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Stats Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">总车辆</p>
+                                <p class="text-xl font-bold text-white">45</p>
+                            </div>
+                            <i class="fas fa-car text-blue-500 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">可用</p>
+                                <p class="text-xl font-bold text-green-400">32</p>
+                            </div>
+                            <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">使用中</p>
+                                <p class="text-xl font-bold text-yellow-400">8</p>
+                            </div>
+                            <i class="fas fa-clock text-yellow-500 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">维护中</p>
+                                <p class="text-xl font-bold text-red-400">5</p>
+                            </div>
+                            <i class="fas fa-wrench text-red-500 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Vehicle Card 1 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-primary-500 transition-colors">
+                        <div class="relative">
+                            <img src="../assets/images/placeholder-vehicle.svg" 
+                                 alt="Vehicle" class="w-full h-48 object-cover">
+                            <!-- Status Badge -->
+                            <span class="absolute top-3 right-3 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                可用
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-white">京A12345</h3>
+                                <span class="text-gray-400 text-sm">轿车</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-3">奥迪 A6L 2023款</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">所属部门:</span>
+                                    <span class="text-white">行政部</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">里程数:</span>
+                                    <span class="text-white">25,680 km</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">下次保养:</span>
+                                    <span class="text-yellow-400">2024-02-15</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    查看详情
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Card 2 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-primary-500 transition-colors">
+                        <div class="relative">
+                            <img src="../assets/images/placeholder-vehicle.svg" 
+                                 alt="Vehicle" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 right-3 bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                使用中
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-white">京B67890</h3>
+                                <span class="text-gray-400 text-sm">SUV</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-3">宝马 X5 2022款</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">所属部门:</span>
+                                    <span class="text-white">销售部</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">里程数:</span>
+                                    <span class="text-white">18,420 km</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">当前驾驶员:</span>
+                                    <span class="text-blue-400">李小明</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    查看详情
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Card 3 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-primary-500 transition-colors">
+                        <div class="relative">
+                            <img src="../assets/images/placeholder-vehicle.svg" 
+                                 alt="Vehicle" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 right-3 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                维护中
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-white">京C11111</h3>
+                                <span class="text-gray-400 text-sm">货车</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-3">福田 欧马可 2021款</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">所属部门:</span>
+                                    <span class="text-white">物流部</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">里程数:</span>
+                                    <span class="text-white">45,230 km</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">维护类型:</span>
+                                    <span class="text-red-400">大修</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    查看详情
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Card 4 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-primary-500 transition-colors">
+                        <div class="relative">
+                            <img src="../assets/images/placeholder-vehicle.svg" 
+                                 alt="Vehicle" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 right-3 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                可用
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-white">京D22222</h3>
+                                <span class="text-gray-400 text-sm">轿车</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-3">丰田 凯美瑞 2023款</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">所属部门:</span>
+                                    <span class="text-white">技术部</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">里程数:</span>
+                                    <span class="text-white">12,580 km</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">下次保养:</span>
+                                    <span class="text-green-400">2024-03-20</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    查看详情
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Card 5 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-primary-500 transition-colors">
+                        <div class="relative">
+                            <img src="../assets/images/placeholder-vehicle.svg" 
+                                 alt="Vehicle" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 right-3 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                可用
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-white">京E33333</h3>
+                                <span class="text-gray-400 text-sm">面包车</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-3">五菱 宏光 2022款</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">所属部门:</span>
+                                    <span class="text-white">后勤部</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">里程数:</span>
+                                    <span class="text-white">35,120 km</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">下次保养:</span>
+                                    <span class="text-yellow-400">2024-01-30</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    查看详情
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Card 6 -->
+                    <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-primary-500 transition-colors">
+                        <div class="relative">
+                            <img src="../assets/images/placeholder-vehicle.svg" 
+                                 alt="Vehicle" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 right-3 bg-yellow-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                使用中
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg font-semibold text-white">京F44444</h3>
+                                <span class="text-gray-400 text-sm">SUV</span>
+                            </div>
+                            <p class="text-gray-300 text-sm mb-3">本田 CR-V 2023款</p>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">所属部门:</span>
+                                    <span class="text-white">人事部</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">里程数:</span>
+                                    <span class="text-white">8,950 km</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-400">当前驾驶员:</span>
+                                    <span class="text-blue-400">王小红</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button class="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    查看详情
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-8">
+                    <div class="text-gray-400 text-sm">
+                        显示 1-6 条，共 45 条记录
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-2 bg-gray-700 text-gray-400 rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-primary-600 text-white rounded-lg">1</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">2</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">3</button>
+                        <span class="px-3 py-2 text-gray-400">...</span>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">8</button>
+                        <button class="px-3 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

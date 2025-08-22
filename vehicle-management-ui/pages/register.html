@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册 - 车辆管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        },
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="dark bg-gray-900 text-white min-h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 z-0">
+        <img src="../assets/images/placeholder-background.svg" 
+             alt="Vehicle Background" 
+             class="w-full h-full object-cover opacity-20">
+        <!-- Source: Unsplash - Modern vehicle fleet -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-primary-900/40"></div>
+    </div>
+
+    <!-- Register Container -->
+    <div class="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Header -->
+            <div class="text-center">
+                <div class="mx-auto h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-user-plus text-2xl text-white"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white mb-2">创建新账户</h2>
+                <p class="text-gray-300">加入车辆管理系统</p>
+            </div>
+
+            <!-- Register Form -->
+            <div class="bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-2xl p-8 border border-gray-700">
+                <form class="space-y-6" id="registerForm">
+                    <!-- Full Name -->
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-user mr-2"></i>姓名
+                        </label>
+                        <input id="fullName" name="fullName" type="text" required 
+                               class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                               placeholder="请输入您的姓名">
+                    </div>
+
+                    <!-- Employee ID -->
+                    <div>
+                        <label for="employeeId" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-id-badge mr-2"></i>员工编号
+                        </label>
+                        <input id="employeeId" name="employeeId" type="text" required 
+                               class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                               placeholder="请输入员工编号">
+                    </div>
+
+                    <!-- Department -->
+                    <div>
+                        <label for="department" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-building mr-2"></i>部门
+                        </label>
+                        <select id="department" name="department" required 
+                                class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200">
+                            <option value="">请选择部门</option>
+                            <option value="admin">行政部</option>
+                            <option value="finance">财务部</option>
+                            <option value="hr">人力资源部</option>
+                            <option value="it">信息技术部</option>
+                            <option value="sales">销售部</option>
+                            <option value="marketing">市场部</option>
+                            <option value="operations">运营部</option>
+                        </select>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-envelope mr-2"></i>邮箱地址
+                        </label>
+                        <input id="email" name="email" type="email" required 
+                               class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                               placeholder="请输入邮箱地址">
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-phone mr-2"></i>手机号码
+                        </label>
+                        <input id="phone" name="phone" type="tel" required 
+                               class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                               placeholder="请输入手机号码">
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-lock mr-2"></i>密码
+                        </label>
+                        <div class="relative">
+                            <input id="password" name="password" type="password" required 
+                                   class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 pr-12"
+                                   placeholder="请输入密码">
+                            <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('password')">
+                                <i class="fas fa-eye text-gray-400 hover:text-white transition-colors" id="passwordToggle"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">
+                            密码至少8位，包含字母和数字
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
+                            <i class="fas fa-lock mr-2"></i>确认密码
+                        </label>
+                        <div class="relative">
+                            <input id="confirmPassword" name="confirmPassword" type="password" required 
+                                   class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 pr-12"
+                                   placeholder="请再次输入密码">
+                            <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePassword('confirmPassword')">
+                                <i class="fas fa-eye text-gray-400 hover:text-white transition-colors" id="confirmPasswordToggle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div class="flex items-start">
+                        <input id="terms" name="terms" type="checkbox" required 
+                               class="mt-1 h-4 w-4 text-primary-600 bg-gray-700 border-gray-600 rounded focus:ring-primary-500 focus:ring-2">
+                        <label for="terms" class="ml-3 text-sm text-gray-300">
+                            我已阅读并同意 <a href="#" class="text-primary-400 hover:text-primary-300 underline">服务条款</a> 和 <a href="#" class="text-primary-400 hover:text-primary-300 underline">隐私政策</a>
+                        </label>
+                    </div>
+
+                    <!-- Register Button -->
+                    <div>
+                        <button type="submit" 
+                                class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 transform hover:scale-105">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                                <i class="fas fa-user-plus group-hover:text-primary-300 transition-colors"></i>
+                            </span>
+                            <span id="registerButtonText">创建账户</span>
+                            <i class="fas fa-spinner fa-spin ml-2 hidden" id="registerSpinner"></i>
+                        </button>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <p class="text-gray-400">
+                            已有账户？ 
+                            <a href="login.html" class="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                                立即登录
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="text-center text-sm text-gray-400">
+                <p>注册即表示您同意我们的服务条款</p>
+                <p class="mt-1">如有问题，请联系系统管理员</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggle = document.getElementById(fieldId + 'Toggle');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                toggle.classList.remove('fa-eye');
+                toggle.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                toggle.classList.remove('fa-eye-slash');
+                toggle.classList.add('fa-eye');
+            }
+        }
+
+        // Form validation and submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const registerButton = document.querySelector('button[type="submit"]');
+            const buttonText = document.getElementById('registerButtonText');
+            const spinner = document.getElementById('registerSpinner');
+            
+            // Password validation
+            if (password.length < 8) {
+                alert('密码至少需要8位字符');
+                return;
+            }
+            
+            if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+                alert('密码必须包含字母和数字');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+            
+            // Show loading state
+            registerButton.disabled = true;
+            buttonText.textContent = '创建中...';
+            spinner.classList.remove('hidden');
+            
+            // Simulate registration process
+            setTimeout(() => {
+                alert('注册成功！请等待管理员审核。');
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button state
+                registerButton.disabled = false;
+                buttonText.textContent = '创建账户';
+                spinner.classList.add('hidden');
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            }, 2000);
+        });
+
+        // Real-time password validation
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const feedback = this.parentNode.nextElementSibling;
+            
+            if (password.length >= 8 && /(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+                feedback.textContent = '密码强度：良好';
+                feedback.className = 'mt-2 text-xs text-green-400';
+            } else if (password.length > 0) {
+                feedback.textContent = '密码至少8位，包含字母和数字';
+                feedback.className = 'mt-2 text-xs text-yellow-400';
+            } else {
+                feedback.textContent = '密码至少8位，包含字母和数字';
+                feedback.className = 'mt-2 text-xs text-gray-400';
+            }
+        });
+
+        // Real-time confirm password validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    this.style.borderColor = '#10b981';
+                } else {
+                    this.style.borderColor = '#ef4444';
+                }
+            } else {
+                this.style.borderColor = '#4b5563';
+            }
+        });
+
+        // Employee ID format validation
+        document.getElementById('employeeId').addEventListener('input', function() {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        });
+
+        // Phone number format validation
+        document.getElementById('phone').addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 11) {
+                this.value = this.value.slice(0, 11);
+            }
+        });
+    </script>
+</body>
+</html>
