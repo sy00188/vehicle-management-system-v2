@@ -54,7 +54,7 @@ class AuthService {
   Future<ApiResponse<User>> login(String username, String password) async {
     try {
       final response = await _dio.post('/auth/login', data: {
-        'username': username,
+        'email': username,  // 后端期望email字段
         'password': password,
       });
 

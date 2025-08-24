@@ -8,6 +8,7 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<RegisterForm>({
     fullName: '',
+    username: '',
     employeeId: '',
     department: '',
     email: '',
@@ -43,6 +44,15 @@ const Register: React.FC = () => {
       newErrors.fullName = '请输入姓名';
     } else if (formData.fullName.trim().length < 2) {
       newErrors.fullName = '姓名至少需要2个字符';
+    }
+
+    // 用户名验证
+    if (!formData.username.trim()) {
+      newErrors.username = '请输入用户名';
+    } else if (formData.username.trim().length < 3) {
+      newErrors.username = '用户名至少需要3个字符';
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      newErrors.username = '用户名只能包含字母、数字和下划线';
     }
 
     // 员工编号验证
@@ -160,6 +170,7 @@ const Register: React.FC = () => {
     try {
       await registerUser({
         name: formData.fullName,
+        username: formData.username,
         employeeId: formData.employeeId,
         department: formData.department,
         email: formData.email,
@@ -219,6 +230,28 @@ const Register: React.FC = () => {
               />
               {errors.fullName && (
                 <p className="mt-1 text-sm text-red-400">{errors.fullName}</p>
+              )}
+            </div>
+
+            {/* 用户名 */}
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
+                <i className="fas fa-at mr-2"></i>用户名
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={formData.username}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 ${
+                  errors.username ? 'border-red-500' : 'border-gray-600'
+                }`}
+                placeholder="请输入用户名"
+              />
+              {errors.username && (
+                <p className="mt-1 text-sm text-red-400">{errors.username}</p>
               )}
             </div>
 

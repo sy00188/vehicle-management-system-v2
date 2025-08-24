@@ -5,12 +5,12 @@ interface ExpenseChartProps {
   data: ExpenseChartData[];
 }
 
-const ExpenseChart: React.FC<ExpenseChartProps> = ({ data }) => {
+const ExpenseChart: React.FC<ExpenseChartProps> = ({ data = [] }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<any>(null);
 
   useEffect(() => {
-    if (!chartRef.current || !data.length) return;
+    if (!chartRef.current || !data || !data.length) return;
 
     // 动态加载 ECharts
     const loadECharts = async () => {
@@ -89,7 +89,7 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({ data }) => {
             labelLine: {
               show: false
             },
-            data: data.map(item => ({
+            data: (data || []).map(item => ({
               value: item.amount,
               name: item.category,
               itemStyle: {

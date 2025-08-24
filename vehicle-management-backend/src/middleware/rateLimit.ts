@@ -2,6 +2,10 @@ import rateLimit from 'express-rate-limit';
 import { Request } from 'express';
 import { config } from '../config/config';
 
+// 开发阶段暂时禁用所有限流机制
+// 生产环境请取消注释以下代码
+
+/*
 // 基础速率限制
 export const rateLimitMiddleware = rateLimit({
   windowMs: config.rateLimitWindowMs, // 15分钟
@@ -18,7 +22,12 @@ export const rateLimitMiddleware = rateLimit({
     return req.path === '/health';
   }
 });
+*/
 
+// 开发阶段的空函数替代
+export const rateLimitMiddleware = (req: any, res: any, next: any) => next();
+
+/*
 // 严格的速率限制（用于敏感操作）
 export const strictRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分钟
@@ -71,3 +80,10 @@ export const uploadRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
+*/
+
+// 开发阶段的空函数替代
+export const strictRateLimit = (req: any, res: any, next: any) => next();
+export const loginRateLimit = (req: any, res: any, next: any) => next();
+export const registerRateLimit = (req: any, res: any, next: any) => next();
+export const uploadRateLimit = (req: any, res: any, next: any) => next();

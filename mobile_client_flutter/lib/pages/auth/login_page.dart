@@ -86,17 +86,23 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 48),
                 
-                // 用户名输入框
+                // 邮箱输入框
                 TextFormField(
                   controller: _usernameController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    labelText: '用户名',
-                    prefixIcon: Icon(Icons.person),
+                    labelText: '邮箱',
+                    hintText: '请输入您的邮箱地址',
+                    prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return '请输入用户名';
+                      return '请输入邮箱地址';
+                    }
+                    // 简单的邮箱格式验证
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+                      return '请输入有效的邮箱地址';
                     }
                     return null;
                   },

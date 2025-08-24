@@ -589,9 +589,11 @@ router.get('/stats/overview', authMiddleware, requireRole(['ADMIN', 'MANAGER']),
   res.json({
     success: true,
     data: {
-      totalApplications,
-      statusStats,
-      typeStats
+      total: totalApplications,
+      pending: statusStats.PENDING || 0,
+      approved: statusStats.APPROVED || 0,
+      rejected: statusStats.REJECTED || 0,
+      approvalRate: totalApplications > 0 ? Math.round(((statusStats.APPROVED || 0) / totalApplications) * 100) : 0
     }
   });
 }));

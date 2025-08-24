@@ -3,11 +3,37 @@ import { ApiService } from '../utils/api';
 
 // 获取费用统计数据
 export const getExpenseStats = async () => {
-  const response = await ApiService.get<any>('/expenses/stats/overview');
+  const response = await ApiService.get<{
+    totalExpenses: number;
+    typeStats: Record<string, { count: number; totalAmount: number }>;
+    monthlyStats: Record<string, number>;
+    totalAmount: number;
+    averageAmount: number;
+  }>('/expenses/stats/overview');
+  
   if (!response.success) {
     throw new Error(response.message || 'Failed to fetch expense stats');
   }
-  return response.data;
+  
+  const backendData = response.data;
+  
+  // 转换后端数据为前端期望的格式
+  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM格式
+  const monthlyAmount = backendData.monthlyStats?.[currentMonth] || 0;
+  
+  return {
+    total: backendData.totalExpenses || 0,
+    pending: 0, // 后端暂未提供此数据
+    approved: 0, // 后端暂未提供此数据
+    rejected: 0, // 后端暂未提供此数据
+    paid: 0, // 后端暂未提供此数据
+    totalAmount: backendData.totalAmount || 0,
+    monthlyAmount: monthlyAmount,
+    fuelCost: backendData.typeStats?.['FUEL']?.totalAmount || 0,
+    maintenanceCost: backendData.typeStats?.['MAINTENANCE']?.totalAmount || 0,
+    insuranceCost: backendData.typeStats?.['INSURANCE']?.totalAmount || 0,
+    otherCost: backendData.typeStats?.['OTHER']?.totalAmount || 0
+  };
 };
 
 // 获取费用列表（分页）
@@ -49,11 +75,32 @@ export const getExpenses = async (
     params.append('search', filters.search);
   }
 
-  const response = await ApiService.get<PaginatedResponse<Expense>>(`/expenses?${params.toString()}`);
+  const response = await ApiService.get<{
+    success: boolean;
+    data: {
+      expenses: Expense[];
+      pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+      };
+    };
+  }>(`/expenses?${params.toString()}`);
+  
   if (!response.success) {
     throw new Error(response.message || 'Failed to fetch expenses');
   }
-  return response.data;
+  
+  return {
+    data: response.data.data?.expenses || [],
+    total: response.data.data?.pagination?.total || 0,
+    page: response.data.data?.pagination?.page || page,
+    limit: response.data.data?.pagination?.pageSize || pageSize,
+    totalPages: response.data.data?.pagination?.totalPages || 1
+  };
 };
 
 // 根据ID获取费用详情
@@ -102,11 +149,34 @@ export const getVehicleExpenseHistory = async (
     pageSize: pageSize.toString()
   });
 
-  const response = await ApiService.get<PaginatedResponse<Expense>>(`/expenses/vehicle/${vehicleId}?${params.toString()}`);
+  const response = await ApiService.get<{
+    success: boolean;
+    data: {
+      vehicle: any;
+      expenses: Expense[];
+      totalAmount: number;
+      pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+      };
+    };
+  }>(`/expenses/vehicle/${vehicleId}?${params.toString()}`);
+  
   if (!response.success) {
     throw new Error(response.message || 'Failed to fetch vehicle expense history');
   }
-  return response.data;
+  
+  return {
+    data: response.data.data?.expenses || [],
+    total: response.data.data?.pagination?.total || 0,
+    page: response.data.data?.pagination?.page || page,
+    limit: response.data.data?.pagination?.pageSize || pageSize,
+    totalPages: response.data.data?.pagination?.totalPages || 1
+  };
 };
 
 // 获取费用报告摘要

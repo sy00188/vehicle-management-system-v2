@@ -5,7 +5,7 @@ interface TodoListProps {
   todos: TodoItem[];
 }
 
-const TodoList: React.FC<TodoListProps> = ({ todos }) => {
+const TodoList: React.FC<TodoListProps> = ({ todos = [] }) => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
@@ -96,18 +96,18 @@ const TodoList: React.FC<TodoListProps> = ({ todos }) => {
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">待办事项</h3>
         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-          {todos.filter(todo => todo.status !== 'completed').length} 项待处理
+          {(todos || []).filter(todo => todo.status !== 'completed').length} 项待处理
         </span>
       </div>
 
       <div className="space-y-3">
-        {todos.length === 0 ? (
+        {(todos || []).length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <i className="fas fa-check-circle text-3xl mb-3"></i>
             <p>暂无待办事项</p>
           </div>
         ) : (
-          todos.map((todo) => (
+          (todos || []).map((todo) => (
             <div key={todo.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-sm transition-shadow">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -150,7 +150,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos }) => {
         )}
       </div>
 
-      {todos.length > 0 && (
+      {(todos || []).length > 0 && (
         <div className="mt-6 pt-4 border-t border-gray-200">
           <button className="w-full text-center text-sm text-primary-600 hover:text-primary-700 font-medium py-2 rounded-lg hover:bg-primary-50 transition-colors">
             查看所有待办事项

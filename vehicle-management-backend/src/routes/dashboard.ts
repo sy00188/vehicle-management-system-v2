@@ -345,7 +345,7 @@ router.get('/usage-chart', authMiddleware, requireRole(['ADMIN', 'MANAGER']), as
     const startDate = new Date(year, month, 1);
     const endDate = new Date(year, month + 1, 1);
 
-    const [totalVehicles, usedVehicles] = await Promise.all([
+    const [totalVehicles, , usedVehicles] = await Promise.all([
       prisma.vehicle.count({
         where: {
           createdAt: { lt: endDate }

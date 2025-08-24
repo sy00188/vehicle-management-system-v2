@@ -10,8 +10,9 @@ interface LoginResponse {
   message: string;
 }
 
-interface RegisterData {
+export interface RegisterData {
   name: string;
+  username: string;
   email: string;
   password: string;
   role?: 'USER' | 'ADMIN' | 'MANAGER';
@@ -177,7 +178,7 @@ export const loginUser = async (username: string, password: string): Promise<Log
 export const logoutUser = async (): Promise<void> => {
   try {
     // 调用后端登出接口（如果有的话）
-    await ApiService.post('/logout', {});
+    await ApiService.post('/auth/logout', {});
   } catch (error) {
     // 即使后端登出失败，也要清除本地存储
     console.warn('后端登出失败，但继续清除本地存储:', error);
@@ -246,7 +247,7 @@ export const refreshToken = async (refreshToken: string): Promise<string> => {
  */
 export const changePassword = async (oldPassword: string, newPassword: string): Promise<void> => {
   try {
-    const response = await ApiService.post<{}>('/change-password', {
+    const response = await ApiService.post<{}>('/auth/change-password', {
       oldPassword,
       newPassword
     });
@@ -266,7 +267,7 @@ export const changePassword = async (oldPassword: string, newPassword: string): 
  */
 export const forgotPassword = async (email: string): Promise<void> => {
   try {
-    const response = await ApiService.post<{}>('/forgot-password', {
+    const response = await ApiService.post<{}>('/auth/forgot-password', {
       email
     });
     
@@ -285,8 +286,9 @@ export const forgotPassword = async (email: string): Promise<void> => {
  */
 export const registerUser = async (registerData: RegisterData): Promise<User> => {
   try {
-    const response = await ApiService.post<{ user: User }>('/register', {
+    const response = await ApiService.post<{ user: User }>('/auth/register', {
       name: registerData.name,
+      username: registerData.username,
       email: registerData.email,
       password: registerData.password,
       role: registerData.role || 'USER',

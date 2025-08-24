@@ -35,7 +35,7 @@ export const config = {
   
   // 速率限制配置
   rateLimitWindowMs: 15 * 60 * 1000, // 15分钟
-  rateLimitMax: 100, // 每个窗口期最大请求数
+  rateLimitMax: 500, // 每个窗口期最大请求数（调整为更合理的值）
   
   // 分页配置
   defaultPageSize: 20,

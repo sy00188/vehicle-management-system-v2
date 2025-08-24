@@ -6,7 +6,7 @@ interface QuickActionsProps {
   actions: QuickAction[];
 }
 
-const QuickActions: React.FC<QuickActionsProps> = ({ actions }) => {
+const QuickActions: React.FC<QuickActionsProps> = ({ actions = [] }) => {
   const navigate = useNavigate();
 
   const handleActionClick = (action: QuickAction) => {
@@ -26,7 +26,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ actions }) => {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        {actions.map((action) => (
+        {(actions || []).map((action) => (
           <button
             key={action.id}
             onClick={() => handleActionClick(action)}

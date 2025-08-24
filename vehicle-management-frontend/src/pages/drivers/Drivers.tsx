@@ -31,7 +31,7 @@ const Drivers: React.FC = () => {
       setLoading(true);
       setError(null);
       const response = await driverService.getDrivers();
-       setDrivers(response.data);
+      setDrivers(response.data);
     } catch (err) {
       console.error('Failed to load drivers:', err);
       setError('加载驾驶员数据失败');

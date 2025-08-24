@@ -4,7 +4,7 @@ import { ApiService } from '../utils/api';
 // 获取申请统计数据
 export const getApplicationStats = async () => {
   try {
-    const response = await ApiService.get('/applications/stats/overview');
+    const response = await ApiService.get<{success: boolean; data: any}>('/applications/stats/overview');
     if (!response.success) {
       throw new Error(response.message || '获取申请统计失败');
     }
@@ -47,11 +47,18 @@ export const getApplications = async (
       params.append('search', filters.search);
     }
 
-    const response = await ApiService.get<PaginatedResponse<Application>>(`/applications?${params}`);
+    const response = await ApiService.get<{applications: Application[]; pagination: {total: number; page: number; pageSize: number; totalPages: number}}>(`/applications?${params}`);
     if (!response.success) {
       throw new Error(response.message || '获取申请列表失败');
     }
-    return response.data;
+    // 转换后端数据结构为前端期望的PaginatedResponse格式
+    return {
+      data: response.data.applications,
+      total: response.data.pagination.total,
+      page: response.data.pagination.page,
+      limit: response.data.pagination.pageSize,
+      totalPages: response.data.pagination.totalPages
+    };
   } catch (error) {
     console.error('获取申请列表失败:', error);
     throw error;
@@ -141,11 +148,18 @@ export const getMyApplications = async (
       pageSize: pageSize.toString()
     });
 
-    const response = await ApiService.get<PaginatedResponse<Application>>(`/applications/my?${params}`);
+    const response = await ApiService.get<{success: boolean; data: {applications: Application[]; pagination: {total: number; page: number; pageSize: number; totalPages: number}}}>(`/applications/my?${params}`);
     if (!response.success) {
       throw new Error(response.message || '获取我的申请列表失败');
     }
-    return response.data;
+    // 转换后端数据结构为前端期望的PaginatedResponse格式
+    return {
+      data: response.data.data.applications,
+      total: response.data.data.pagination.total,
+      page: response.data.data.pagination.page,
+      limit: response.data.data.pagination.pageSize,
+      totalPages: response.data.data.pagination.totalPages
+    };
   } catch (error) {
     console.error('获取我的申请列表失败:', error);
     throw error;

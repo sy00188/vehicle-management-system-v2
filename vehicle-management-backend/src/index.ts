@@ -6,7 +6,7 @@ import { config } from './config/config';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFoundHandler';
 import { authMiddleware } from './middleware/auth';
-import { rateLimitMiddleware } from './middleware/rateLimit';
+// import { rateLimitMiddleware } from './middleware/rateLimit'; // 开发阶段暂时禁用限流
 
 // 路由导入
 import authRoutes from './routes/auth';
@@ -35,8 +35,8 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 速率限制
-app.use(rateLimitMiddleware);
+// 速率限制 - 开发阶段暂时禁用
+// app.use(rateLimitMiddleware);
 
 // 静态文件服务
 app.use('/uploads', express.static('uploads'));

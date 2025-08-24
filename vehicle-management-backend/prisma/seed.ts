@@ -133,8 +133,10 @@ async function main() {
   console.log('系统设置创建成功');
 
   // 创建示例车辆
-  const vehicle = await prisma.vehicle.create({
-    data: {
+  const vehicle1 = await prisma.vehicle.upsert({
+    where: { plateNumber: '京A12345' },
+    update: {},
+    create: {
       plateNumber: '京A12345',
       brand: '丰田',
       model: '凯美瑞',
@@ -155,7 +157,34 @@ async function main() {
     },
   });
 
-  console.log('示例车辆创建成功:', vehicle.plateNumber);
+  console.log('示例车辆1创建成功:', vehicle1.plateNumber);
+
+  // 创建第二辆示例车辆
+  const vehicle2 = await prisma.vehicle.upsert({
+    where: { plateNumber: '京B67890' },
+    update: {},
+    create: {
+      plateNumber: '京B67890',
+      brand: '本田',
+      model: 'CR-V',
+      year: 2023,
+      color: '黑色',
+      vin: 'JHLRD78856C123456',
+      engineNumber: 'H234567890',
+      fuelType: 'GASOLINE',
+      seats: 5,
+      mileage: 8000.0,
+      status: 'AVAILABLE',
+      purchaseDate: new Date('2023-03-20'),
+      purchasePrice: 280000.00,
+      insuranceExpiry: new Date('2026-03-20'),
+      inspectionExpiry: new Date('2025-03-20'),
+      description: 'SUV公务用车，适合长途出行',
+      createdById: adminUser.id,
+    },
+  });
+
+  console.log('示例车辆2创建成功:', vehicle2.plateNumber);
 
   // 创建示例司机
   const driver = await prisma.driver.create({

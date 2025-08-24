@@ -74,7 +74,7 @@ class VehicleService {
       }
 
       final response = await _dio.get(
-        '/api/vehicles',
+        '/vehicles',
         queryParameters: queryParams,
       );
 

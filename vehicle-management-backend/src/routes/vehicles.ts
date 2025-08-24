@@ -483,9 +483,11 @@ router.get('/stats/overview', authMiddleware, requireRole(['ADMIN', 'MANAGER']),
   res.json({
     success: true,
     data: {
-      totalVehicles,
-      statusStats,
-      typeStats
+      total: totalVehicles,
+      available: statusStats.AVAILABLE || 0,
+      inUse: statusStats.IN_USE || 0,
+      maintenance: statusStats.MAINTENANCE || 0,
+      utilizationRate: totalVehicles > 0 ? Math.round(((statusStats.IN_USE || 0) / totalVehicles) * 100) : 0
     }
   });
 }));

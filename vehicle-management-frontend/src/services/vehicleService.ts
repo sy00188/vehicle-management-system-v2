@@ -6,8 +6,8 @@ import { ApiService } from '../utils/api';
 
 // 获取车辆统计信息
 export const getVehicleStats = async (): Promise<VehicleStats> => {
-  const response = await ApiService.get<{success: boolean; data: VehicleStats}>('/vehicles/stats/overview');
-  return response.data.data;
+  const response = await ApiService.get<VehicleStats>('/vehicles/stats/overview');
+  return response.data;
 };
 
 // 获取车辆列表

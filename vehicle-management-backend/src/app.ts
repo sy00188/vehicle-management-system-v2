@@ -6,7 +6,7 @@ import path from 'path';
 import { config } from './config/config';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFoundHandler';
-import { rateLimitMiddleware } from './middleware/rateLimit';
+// import { rateLimitMiddleware } from './middleware/rateLimit'; // 开发阶段暂时禁用限流
 
 // 导入路由
 import authRoutes from './routes/auth';
@@ -46,8 +46,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // 静态文件服务
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// 基础限流
-app.use(rateLimitMiddleware);
+// 基础限流 - 开发阶段暂时禁用
+// app.use(rateLimitMiddleware);
 
 // 健康检查
 app.get('/health', (req, res) => {

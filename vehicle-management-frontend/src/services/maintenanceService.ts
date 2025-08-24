@@ -45,11 +45,17 @@ export const getMaintenanceRecords = async (
     params.append('search', filters.search);
   }
 
-  const response = await ApiService.get<PaginatedResponse<MaintenanceRecord>>(`/maintenances?${params.toString()}`);
+  const response = await ApiService.get<{maintenances: MaintenanceRecord[], pagination: {page: number, pageSize: number, total: number, totalPages: number, hasNext: boolean, hasPrev: boolean}}>(`/maintenances?${params.toString()}`);
   if (!response.success) {
     throw new Error(response.message || 'Failed to fetch maintenance records');
   }
-  return response.data;
+  return {
+    data: response.data.maintenances,
+    total: response.data.pagination.total,
+    page: response.data.pagination.page,
+    limit: response.data.pagination.pageSize,
+    totalPages: response.data.pagination.totalPages
+  };
 };
 
 // 根据ID获取维护记录详情
@@ -98,11 +104,17 @@ export const getVehicleMaintenanceHistory = async (
     pageSize: pageSize.toString()
   });
 
-  const response = await ApiService.get<PaginatedResponse<MaintenanceRecord>>(`/maintenances/vehicle/${vehicleId}?${params.toString()}`);
+  const response = await ApiService.get<{maintenances: MaintenanceRecord[], pagination: {page: number, pageSize: number, total: number, totalPages: number, hasNext: boolean, hasPrev: boolean}}>(`/maintenances/vehicle/${vehicleId}?${params.toString()}`);
   if (!response.success) {
     throw new Error(response.message || 'Failed to fetch vehicle maintenance history');
   }
-  return response.data;
+  return {
+    data: response.data.maintenances,
+    total: response.data.pagination.total,
+    page: response.data.pagination.page,
+    limit: response.data.pagination.pageSize,
+    totalPages: response.data.pagination.totalPages
+  };
 };
 
 // 获取维护报告摘要

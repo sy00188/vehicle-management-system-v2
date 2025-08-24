@@ -39,6 +39,13 @@ const Dashboard: React.FC = () => {
       } catch (err) {
         setError('加载仪表板数据失败');
         console.error('Dashboard data fetch error:', err);
+        // 设置默认值以防止undefined错误
+        setStats(null);
+        setActivities([]);
+        setTodos([]);
+        setQuickActions([]);
+        setUsageData([]);
+        setExpenseData([]);
       } finally {
         setLoading(false);
       }

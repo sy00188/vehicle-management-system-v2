@@ -11,14 +11,20 @@ export const getUsers = async (
   try {
     const params = new URLSearchParams({
       page: page.toString(),
-      limit: limit.toString(),
+      pageSize: limit.toString(),
       ...(search && { search })
     });
 
-    const response = await ApiService.get<PaginatedResponse<User>>(`/users?${params}`);
+    const response = await ApiService.get<{users: User[], pagination: {page: number, pageSize: number, total: number, totalPages: number, hasNext: boolean, hasPrev: boolean}}>(`/users?${params}`);
     
     if (response.success && response.data) {
-      return response.data;
+      return {
+        data: response.data.users,
+        total: response.data.pagination.total,
+        page: response.data.pagination.page,
+        limit: response.data.pagination.pageSize,
+        totalPages: response.data.pagination.totalPages
+      };
     } else {
       throw new Error(response.message || '获取用户列表失败');
     }

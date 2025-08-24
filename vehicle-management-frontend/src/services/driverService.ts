@@ -28,12 +28,20 @@ export const getDrivers = async (
     if (filters.search) params.append('search', filters.search);
     if (filters.status) params.append('status', filters.status);
 
-    const response = await ApiService.get<PaginatedResponse<Driver>>(`/drivers?${params}`);
+    const response = await ApiService.get<{drivers: Driver[], pagination: {total: number, page: number, pageSize: number, totalPages: number}}>(`/drivers?${params}`);
     
     if (!response.success) {
       throw new Error(response.message || 'Failed to fetch drivers');
     }
-    return response.data;
+    
+    // 转换后端响应格式为前端期望的PaginatedResponse格式
+    return {
+      data: response.data.drivers,
+      total: response.data.pagination.total,
+      page: response.data.pagination.page,
+      limit: response.data.pagination.pageSize,
+      totalPages: response.data.pagination.totalPages
+    };
   } catch (error) {
     console.error('获取司机列表失败:', error);
     throw error;

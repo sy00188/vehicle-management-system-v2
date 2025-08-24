@@ -332,6 +332,7 @@ export interface LoginForm {
 
 export interface RegisterForm {
   fullName: string;
+  username: string;
   employeeId: string;
   department: string;
   email: string;

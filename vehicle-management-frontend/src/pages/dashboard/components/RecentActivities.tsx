@@ -5,7 +5,7 @@ interface RecentActivitiesProps {
   activities: ActivityRecord[];
 }
 
-const RecentActivities: React.FC<RecentActivitiesProps> = ({ activities }) => {
+const RecentActivities: React.FC<RecentActivitiesProps> = ({ activities = [] }) => {
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();

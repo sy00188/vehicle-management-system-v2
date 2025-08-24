@@ -5,12 +5,12 @@ interface UsageChartProps {
   data: UsageChartData[];
 }
 
-const UsageChart: React.FC<UsageChartProps> = ({ data }) => {
+const UsageChart: React.FC<UsageChartProps> = ({ data = [] }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<any>(null);
 
   useEffect(() => {
-    if (!chartRef.current || !data.length) return;
+    if (!chartRef.current || !data || !data.length) return;
 
     // 动态加载 ECharts
     const loadECharts = async () => {
@@ -57,7 +57,7 @@ const UsageChart: React.FC<UsageChartProps> = ({ data }) => {
         },
         xAxis: {
           type: 'category',
-          data: data.map(item => item.month),
+          data: (data || []).map(item => item.month),
           axisLine: {
             lineStyle: {
               color: '#e5e7eb'
@@ -90,7 +90,7 @@ const UsageChart: React.FC<UsageChartProps> = ({ data }) => {
           {
             name: '使用率',
             type: 'line',
-            data: data.map(item => item.usageRate),
+            data: (data || []).map(item => item.usageRate),
             smooth: true,
             lineStyle: {
               color: '#3b82f6',

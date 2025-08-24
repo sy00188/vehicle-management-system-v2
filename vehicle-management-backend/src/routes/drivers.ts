@@ -350,8 +350,12 @@ router.get('/stats/overview', authMiddleware, requireRole(['ADMIN', 'MANAGER']),
   res.json({
     success: true,
     data: {
-      totalDrivers,
-      statusStats
+      total: totalDrivers,
+      available: statusStats['AVAILABLE'] || 0,
+      busy: statusStats['BUSY'] || 0,
+      onLeave: statusStats['ON_LEAVE'] || 0,
+      inactive: statusStats['INACTIVE'] || 0,
+      averageRating: 4.5 // 暂时使用固定值，后续可以添加评分系统
     }
   });
 }));

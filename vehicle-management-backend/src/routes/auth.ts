@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { config } from '../config/config';
 import { asyncHandler } from '../middleware/errorHandler';
 import { ValidationError, UnauthorizedError, ConflictError } from '../middleware/errorHandler';
-import { loginRateLimit, registerRateLimit } from '../middleware/rateLimit';
+// import { loginRateLimit, registerRateLimit } from '../middleware/rateLimit'; // 开发阶段暂时禁用限流
 import { authMiddleware } from '../middleware/auth';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
 import { hashPassword, verifyPassword } from '../utils/password';
@@ -27,7 +27,7 @@ const generateTokens = (user: any) => {
 };
 
 // 用户注册
-router.post('/register', registerRateLimit, asyncHandler(async (req, res) => {
+router.post('/register', /* registerRateLimit, */ asyncHandler(async (req, res) => {
   const { email, username, password, name, phone, role = 'USER' } = req.body;
 
   // 验证必填字段
@@ -104,7 +104,7 @@ router.post('/register', registerRateLimit, asyncHandler(async (req, res) => {
 }));
 
 // 用户登录
-router.post('/login', loginRateLimit, asyncHandler(async (req, res) => {
+router.post('/login', /* loginRateLimit, */ asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   // 验证必填字段
