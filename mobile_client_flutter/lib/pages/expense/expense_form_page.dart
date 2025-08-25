@@ -5,7 +5,7 @@ import '../../models/vehicle.dart';
 import '../../providers/expense_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../utils/date_utils.dart';
+import '../../utils/date_utils.dart' as app_date_utils;
 
 class ExpenseFormPage extends StatefulWidget {
   final ExpenseRecord? expense;
@@ -210,7 +210,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
           suffixIcon: Icon(Icons.calendar_today),
         ),
         child: Text(
-          DateUtils.formatDisplayDate(_expenseDate),
+          app_date_utils.DateUtils.formatDisplayDate(_expenseDate),
         ),
       ),
     );
