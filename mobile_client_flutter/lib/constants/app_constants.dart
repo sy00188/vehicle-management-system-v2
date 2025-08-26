@@ -1,7 +1,7 @@
 /// 应用常量定义
 class AppConstants {
   // API 配置
-  static const String baseUrl = 'http://localhost:3000/api/v1';
+  static const String baseUrl = 'http://localhost:3000';
   static const String apiVersion = 'v1';
   
   // 存储键名

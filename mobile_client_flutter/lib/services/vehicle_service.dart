@@ -74,7 +74,7 @@ class VehicleService {
       }
 
       final response = await _dio.get(
-        '/vehicles',
+        '/api/v1/vehicles',
         queryParameters: queryParams,
       );
 
@@ -141,7 +141,7 @@ class VehicleService {
   /// [vehicleId] 车辆ID
   Future<ApiResponse<Vehicle>> getVehicleById(String vehicleId) async {
     try {
-      final response = await _dio.get('/api/vehicles/$vehicleId');
+      final response = await _dio.get('/api/v1/vehicles/$vehicleId');
 
       if (response.statusCode == 200) {
         final responseData = response.data;
@@ -172,7 +172,7 @@ class VehicleService {
   Future<ApiResponse<Vehicle>> createVehicle(Map<String, dynamic> vehicleData) async {
     try {
       final response = await _dio.post(
-        '/api/vehicles',
+        '/api/v1/vehicles',
         data: vehicleData,
       );
 
@@ -206,7 +206,7 @@ class VehicleService {
   Future<ApiResponse<Vehicle>> updateVehicle(String vehicleId, Map<String, dynamic> vehicleData) async {
     try {
       final response = await _dio.put(
-        '/api/vehicles/$vehicleId',
+        '/api/v1/vehicles/$vehicleId',
         data: vehicleData,
       );
 
@@ -238,7 +238,7 @@ class VehicleService {
   /// [vehicleId] 车辆ID
   Future<ApiResponse<void>> deleteVehicle(String vehicleId) async {
     try {
-      final response = await _dio.delete('/api/vehicles/$vehicleId');
+      final response = await _dio.delete('/api/v1/vehicles/$vehicleId');
 
       if (response.statusCode == 200) {
         final responseData = response.data;
@@ -265,7 +265,7 @@ class VehicleService {
   /// 获取车辆统计信息
   Future<ApiResponse<Map<String, dynamic>>> getVehicleStatistics() async {
     try {
-      final response = await _dio.get('/api/vehicles/statistics');
+      final response = await _dio.get('/api/v1/vehicles/statistics');
 
       if (response.statusCode == 200) {
         final responseData = response.data;
@@ -293,7 +293,7 @@ class VehicleService {
   /// 获取可用车辆列表（用于申请）
   Future<ApiResponse<List<Vehicle>>> getAvailableVehicles() async {
     try {
-      final response = await _dio.get('/api/vehicles/available');
+      final response = await _dio.get('/api/v1/vehicles/available');
 
       if (response.statusCode == 200) {
         final responseData = response.data;

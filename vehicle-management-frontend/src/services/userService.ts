@@ -2,17 +2,26 @@ import type { User, PaginatedResponse, ApiResponse } from '../types';
 import { ApiService } from '../utils/api';
 
 
+// 用户过滤器接口
+export interface UserFilters {
+  search?: string;
+  role?: string;
+  status?: string;
+}
+
 // 获取用户列表
 export const getUsers = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  filters?: UserFilters
 ): Promise<PaginatedResponse<User>> => {
   try {
     const params = new URLSearchParams({
       page: page.toString(),
       pageSize: limit.toString(),
-      ...(search && { search })
+      ...(filters?.search && { search: filters.search }),
+      ...(filters?.role && { role: filters.role }),
+      ...(filters?.status && { status: filters.status })
     });
 
     const response = await ApiService.get<{users: User[], pagination: {page: number, pageSize: number, total: number, totalPages: number, hasNext: boolean, hasPrev: boolean}}>(`/users?${params}`);
@@ -204,6 +213,64 @@ export const resetUserPassword = async (userId: string, newPassword: string): Pr
       success: false,
       data: null,
       message: error instanceof Error ? error.message : '密码重置失败'
+    };
+  }
+};
+
+// 更新用户状态（管理员功能）
+export const updateUserStatus = async (userId: string, status: 'ACTIVE' | 'INACTIVE'): Promise<ApiResponse<User>> => {
+  try {
+    const response = await ApiService.patch<User>(`/users/${userId}`, { status });
+    
+    if (response.success && response.data) {
+      return {
+        success: true,
+        data: response.data,
+        message: '用户状态更新成功'
+      };
+    } else {
+      throw new Error(response.message || '用户状态更新失败');
+    }
+  } catch (error) {
+    console.error('用户状态更新失败:', error);
+    return {
+      success: false,
+      data: null as any,
+      message: error instanceof Error ? error.message : '用户状态更新失败'
+    };
+  }
+};
+
+// 获取用户统计信息
+export const getUserStats = async (): Promise<ApiResponse<{
+  totalUsers: number;
+  activeUsers: number;
+  inactiveUsers: number;
+  roleStats: Record<string, number>;
+}>> => {
+  try {
+    const response = await ApiService.get<{
+      totalUsers: number;
+      activeUsers: number;
+      inactiveUsers: number;
+      roleStats: Record<string, number>;
+    }>('/users/stats/overview');
+    
+    if (response.success && response.data) {
+      return {
+        success: true,
+        data: response.data,
+        message: '获取用户统计成功'
+      };
+    } else {
+      throw new Error(response.message || '获取用户统计失败');
+    }
+  } catch (error) {
+    console.error('获取用户统计失败:', error);
+    return {
+      success: false,
+      data: null as any,
+      message: error instanceof Error ? error.message : '获取用户统计失败'
     };
   }
 };

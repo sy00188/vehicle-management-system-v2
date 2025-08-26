@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { MaintenanceRecord, MaintenanceFilters } from '../../types';
 // import MaintenanceStatsComponent from '../../components/maintenance/MaintenanceStats';
 // import MaintenanceFiltersComponent from '../../components/maintenance/MaintenanceFilters';
@@ -7,6 +8,7 @@ import { MAINTENANCE_SORT_OPTIONS } from '../../utils/constants';
 import { maintenanceService } from '../../services/maintenanceService';
 
 const Maintenance: React.FC = () => {
+  const navigate = useNavigate();
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
   const [filteredRecords, setFilteredRecords] = useState<MaintenanceRecord[]>([]);
   // const [stats, setStats] = useState<MaintenanceStats>({
@@ -137,9 +139,7 @@ const Maintenance: React.FC = () => {
   const paginatedRecords = filteredRecords.slice(startIndex, startIndex + itemsPerPage);
 
   const handleEdit = (maintenance: MaintenanceRecord) => {
-    // TODO: 导航到编辑页面或打开编辑模态框
-    console.log('编辑维修记录:', maintenance);
-    // 这里可以添加路由跳转或模态框逻辑
+    navigate(`/maintenance/${maintenance.id}/edit`);
   };
 
   const handleView = (maintenance: MaintenanceRecord) => {
@@ -177,9 +177,12 @@ const Maintenance: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">维修管理</h1>
           <p className="text-gray-600 mt-1">管理车辆维修记录和保养计划</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-          + 新增维修记录
-        </button>
+        <button 
+            onClick={() => navigate('/maintenance/new')}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            新增维修记录
+          </button>
       </div>
 
       {/* 错误提示 */}
@@ -226,9 +229,12 @@ const Maintenance: React.FC = () => {
           <div className="text-gray-400 text-6xl mb-4">🔧</div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">暂无维修记录</h3>
           <p className="text-gray-500 mb-4">没有找到符合条件的维修记录</p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-            新增维修记录
-          </button>
+          <button 
+          onClick={() => navigate('/maintenance/new')}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          新增维修记录
+        </button>
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Download, Upload } from 'lucide-react';
 import type { Driver } from '../../types';
 import DriverStats from '../../components/drivers/DriverStats';
@@ -13,6 +14,8 @@ import {
 } from '../../utils/constants';
 
 const Drivers: React.FC = () => {
+  const navigate = useNavigate();
+  
   // 状态管理
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [filteredDrivers, setFilteredDrivers] = useState<Driver[]>([]);
@@ -209,13 +212,12 @@ const Drivers: React.FC = () => {
   // 事件处理函数
   const handleEdit = (driver: Driver) => {
     console.log('编辑驾驶员:', driver);
-    // TODO: 导航到编辑页面
+    navigate(`/drivers/${driver.id}/edit`);
   };
 
   const handleView = (driver: Driver) => {
     console.log('查看驾驶员:', driver);
-    // TODO: 导航到驾驶员详情页面
-    // navigate(`/drivers/${driver.id}`);
+    navigate(`/drivers/${driver.id}`);
   };
 
   const handleAssignTask = async (driver: Driver) => {
@@ -239,8 +241,7 @@ const Drivers: React.FC = () => {
 
   const handleAddDriver = () => {
     console.log('添加新驾驶员');
-    // TODO: 导航到添加驾驶员页面
-    // navigate('/drivers/new');
+    navigate('/drivers/new');
   };
 
   const handleExport = async () => {

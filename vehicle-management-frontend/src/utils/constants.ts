@@ -359,6 +359,7 @@ export const ROUTES = {
   DRIVERS: '/drivers',
   DRIVER_DETAIL: '/drivers/:id',
   EXPENSES: '/expenses',
+  NOTIFICATIONS: '/notifications',
   SETTINGS: '/settings',
   PROFILE: '/profile',
 } as const;
@@ -394,6 +395,18 @@ export const NAVIGATION_ITEMS = [
     label: '费用管理',
     path: ROUTES.EXPENSES,
     icon: 'expenses',
+  },
+  {
+    key: 'notifications',
+    label: '通知管理',
+    path: ROUTES.NOTIFICATIONS,
+    icon: 'notifications',
+  },
+  {
+    key: 'reports',
+    label: '报表分析',
+    path: '/reports',
+    icon: 'reports',
   },
   {
     key: 'settings',
@@ -576,3 +589,76 @@ export const USER_STATUS_COLORS = {
   [USER_STATUS.LOCKED]: 'error',
   [USER_STATUS.PENDING]: 'warning',
 } as const;
+
+// 通知类型
+export const NOTIFICATION_TYPES = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  WARNING: 'warning',
+  INFO: 'info',
+} as const;
+
+export const NOTIFICATION_TYPE_LABELS = {
+  [NOTIFICATION_TYPES.SUCCESS]: '成功',
+  [NOTIFICATION_TYPES.ERROR]: '错误',
+  [NOTIFICATION_TYPES.WARNING]: '警告',
+  [NOTIFICATION_TYPES.INFO]: '信息',
+};
+
+export const NOTIFICATION_TYPE_COLORS = {
+  [NOTIFICATION_TYPES.SUCCESS]: 'success',
+  [NOTIFICATION_TYPES.ERROR]: 'error',
+  [NOTIFICATION_TYPES.WARNING]: 'warning',
+  [NOTIFICATION_TYPES.INFO]: 'primary',
+} as const;
+
+// 通知状态
+export const NOTIFICATION_STATUS = {
+  READ: 'read',
+  UNREAD: 'unread',
+} as const;
+
+export const NOTIFICATION_STATUS_LABELS = {
+  [NOTIFICATION_STATUS.READ]: '已读',
+  [NOTIFICATION_STATUS.UNREAD]: '未读',
+};
+
+// 通知排序选项
+export const NOTIFICATION_SORT_OPTIONS = {
+  DATE_DESC: 'date_desc',
+  DATE_ASC: 'date_asc',
+  TYPE_ASC: 'type_asc',
+  TYPE_DESC: 'type_desc',
+  STATUS_ASC: 'status_asc',
+  STATUS_DESC: 'status_desc',
+} as const;
+
+export const NOTIFICATION_SORT_LABELS = {
+  [NOTIFICATION_SORT_OPTIONS.DATE_DESC]: '时间从新到旧',
+  [NOTIFICATION_SORT_OPTIONS.DATE_ASC]: '时间从旧到新',
+  [NOTIFICATION_SORT_OPTIONS.TYPE_ASC]: '类型 A-Z',
+  [NOTIFICATION_SORT_OPTIONS.TYPE_DESC]: '类型 Z-A',
+  [NOTIFICATION_SORT_OPTIONS.STATUS_ASC]: '状态 A-Z',
+  [NOTIFICATION_SORT_OPTIONS.STATUS_DESC]: '状态 Z-A',
+};
+
+// 通知筛选选项
+export const NOTIFICATION_FILTER_OPTIONS = {
+  ALL: 'all',
+  UNREAD: 'unread',
+  READ: 'read',
+  SUCCESS: 'success',
+  ERROR: 'error',
+  WARNING: 'warning',
+  INFO: 'info',
+} as const;
+
+export const NOTIFICATION_FILTER_LABELS = {
+  [NOTIFICATION_FILTER_OPTIONS.ALL]: '全部',
+  [NOTIFICATION_FILTER_OPTIONS.UNREAD]: '未读',
+  [NOTIFICATION_FILTER_OPTIONS.READ]: '已读',
+  [NOTIFICATION_FILTER_OPTIONS.SUCCESS]: '成功',
+  [NOTIFICATION_FILTER_OPTIONS.ERROR]: '错误',
+  [NOTIFICATION_FILTER_OPTIONS.WARNING]: '警告',
+  [NOTIFICATION_FILTER_OPTIONS.INFO]: '信息',
+};

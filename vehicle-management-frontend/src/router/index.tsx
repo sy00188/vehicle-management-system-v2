@@ -27,15 +27,17 @@ import Applications from '../pages/applications/Applications';
 import ApplicationForm from '../pages/applications/ApplicationForm';
 import Drivers from '../pages/drivers/Drivers';
 import Maintenance from '../pages/maintenance/Maintenance';
+import MaintenanceForm from '../pages/maintenance/MaintenanceForm';
 import Expense from '../pages/expense/Expense';
 import ExpenseForm from '../pages/expense/ExpenseForm';
 import ExpenseDetail from '../pages/expense/ExpenseDetail';
 import DriverForm from '../pages/driver/DriverForm';
 import DriverDetail from '../pages/driver/DriverDetail';
 import Settings from '../pages/settings/Settings';
+import Reports from '../pages/reports/Reports';
+import Notifications from '../pages/notifications/Notifications';
 
-// 临时页面组件
-const TempVehicleDetail = () => <PlaceholderPage title="车辆详情" />;
+import VehicleDetail from '../pages/vehicles/VehicleDetail';
 // 临时占位组件
 // const TempApplicationForm = () => <PlaceholderPage title="申请表单" />;
 // const TempMaintenanceList = () => <PlaceholderPage title="维修管理" />;
@@ -134,7 +136,7 @@ const router = createBrowserRouter([
         path: `${ROUTES.VEHICLES}/:id`,
         element: (
           <ErrorBoundary>
-            <TempVehicleDetail />
+            <VehicleDetail />
           </ErrorBoundary>
         ),
       },
@@ -175,6 +177,22 @@ const router = createBrowserRouter([
         element: (
           <ErrorBoundary>
             <Maintenance />
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: '/maintenance/new',
+        element: (
+          <ErrorBoundary>
+            <MaintenanceForm />
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: '/maintenance/:id/edit',
+        element: (
+          <ErrorBoundary>
+            <MaintenanceForm />
           </ErrorBoundary>
         ),
       },
@@ -239,6 +257,22 @@ const router = createBrowserRouter([
         element: (
           <ErrorBoundary>
             <Settings />
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: ROUTES.NOTIFICATIONS,
+        element: (
+          <ErrorBoundary>
+            <Notifications />
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: '/reports',
+        element: (
+          <ErrorBoundary>
+            <Reports />
           </ErrorBoundary>
         ),
       },

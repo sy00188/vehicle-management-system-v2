@@ -8,6 +8,8 @@ import {
   Wrench, 
   DollarSign, 
   Settings,
+  Bell,
+  BarChart3,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -23,6 +25,8 @@ const iconMap = {
   drivers: Users,
   maintenance: Wrench,
   expenses: DollarSign,
+  notifications: Bell,
+  reports: BarChart3,
   settings: Settings,
 };
 

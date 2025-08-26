@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
 import { Badge } from '../../components/ui/Badge';
@@ -54,11 +54,16 @@ import {
 import type {
   UserManagement,
   Role,
-  SystemParameter,
+  // SystemParameter,
   BackupRecord,
   SystemLog,
   SystemInfo,
+  // User,
 } from '../../types';
+import { getUsers, /* createUser, updateUser, deleteUser, updateUserStatus, */ getUserStats, type UserFilters } from '../../services/userService';
+import { getRoles, createRole, updateRole, deleteRole, getRolePermissions, updateRolePermissions, /* getRoleStats, type RoleFilters, */ type RoleData } from '../../services/roleService';
+// import { validateUserForm, hasFormErrors, getPasswordStrength, type UserFormData, type UserFormErrors } from '../../utils/userValidation';
+import { systemParamsService, type SystemParam, type SystemParamFormData, type SystemParamQueryParams } from '../../services/systemParamsService';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>(SETTINGS_TABS.USER_MANAGEMENT);
@@ -72,8 +77,66 @@ const Settings: React.FC = () => {
   const [isBackupDialogOpen, setIsBackupDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserManagement | null>(null);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
-  const [editingParam, setEditingParam] = useState<SystemParameter | null>(null);
+  const [editingParam, setEditingParam] = useState<SystemParam | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  // 用户管理相关状态
+  // const [users, setUsers] = useState<User[]>([]);
+  // const [userStats, setUserStats] = useState<any>(null);
+  // const [loading, setLoading] = useState(false);
+  const [currentPage] = useState(1);
+  // const [totalPages, setTotalPages] = useState(1);
+  // const [totalUsers, setTotalUsers] = useState(0);
+  // const [userFormData, setUserFormData] = useState<UserFormData>({});
+  // const [userFormErrors, setUserFormErrors] = useState<UserFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 角色管理相关状态
+  const [roles, setRoles] = useState<Role[]>([]);
+  // const [roleStats, setRoleStats] = useState<any>(null);
+  const [roleLoading, setRoleLoading] = useState(false);
+  const [roleFormData, setRoleFormData] = useState<Omit<RoleData, 'permissions'> & { permissions?: Record<string, boolean> }>({ name: '', description: '', permissions: {} });
+  const [rolePermissions, setRolePermissions] = useState<Record<string, boolean>>({});
+  const [selectedRoleForPermissions, setSelectedRoleForPermissions] = useState<string>('');
+
+  // 系统参数相关状态
+  const [systemParams, setSystemParams] = useState<SystemParam[]>([]);
+  // const [paramLoading, setParamLoading] = useState(false);
+  // const [paramSearchTerm, setParamSearchTerm] = useState('');
+  // const [selectedParamCategory, setSelectedParamCategory] = useState<string>('');
+  // const [selectedParamType, setSelectedParamType] = useState<string>('');
+  const [paramFormData, setParamFormData] = useState<SystemParamFormData>({
+    key: '',
+    value: '',
+    type: 'STRING',
+    category: '',
+    description: '',
+    isPublic: false
+  });
+  // const [paramFormErrors, setParamFormErrors] = useState<any>({});
+  // const [paramCategories, setParamCategories] = useState<string[]>([]);
+
+  // 组件加载时获取数据
+  useEffect(() => {
+    loadUsers();
+    loadUserStats();
+  }, [currentPage, searchTerm, selectedRole, selectedStatus]);
+
+  useEffect(() => {
+    loadRoles();
+    loadRoleStats();
+  }, []);
+
+  useEffect(() => {
+    if (selectedRoleForPermissions) {
+      loadRolePermissions(selectedRoleForPermissions);
+    }
+  }, [selectedRoleForPermissions]);
+
+  useEffect(() => {
+    loadSystemParams();
+    // loadParamCategories(); // 暂时注释掉，因为setParamCategories未使用
+  }, []); // 注释掉依赖项，因为相关状态变量已被注释
 
   // Mock data
   const mockUsers: UserManagement[] = [
@@ -155,95 +218,9 @@ const Settings: React.FC = () => {
     },
   ];
 
-  const mockRoles: Role[] = [
-    {
-      id: 'role-1',
-      name: '超级管理员',
-      description: '拥有系统所有权限',
-      permissions: [],
-      isSystem: true,
-      createdAt: '2023-01-01 00:00:00',
-      updatedAt: '2023-01-01 00:00:00',
-    },
-    {
-      id: 'role-2',
-      name: '车队管理员',
-      description: '管理车辆和驾驶员',
-      permissions: [],
-      isSystem: false,
-      createdAt: '2023-06-01 00:00:00',
-      updatedAt: '2023-06-01 00:00:00',
-    },
-    {
-      id: 'role-3',
-      name: '驾驶员',
-      description: '查看任务和车辆信息',
-      permissions: [],
-      isSystem: false,
-      createdAt: '2023-03-15 00:00:00',
-      updatedAt: '2023-03-15 00:00:00',
-    },
-  ];
+  // Removed mockRoles as it's not used
 
-  const mockSystemParams: SystemParameter[] = [
-    {
-      id: '1',
-      key: 'system.name',
-      name: '系统名称',
-      value: '车辆管理系统',
-      type: 'text',
-      description: '系统显示名称',
-      category: '基础设置',
-      isRequired: true,
-      isReadonly: false,
-      createdAt: '2023-01-01 00:00:00',
-      updatedAt: '2024-01-15 10:00:00',
-    },
-    {
-      id: '2',
-      key: 'system.version',
-      name: '系统版本',
-      value: '1.0.0',
-      type: 'text',
-      description: '当前系统版本号',
-      category: '基础设置',
-      isRequired: true,
-      isReadonly: true,
-      createdAt: '2023-01-01 00:00:00',
-      updatedAt: '2024-01-15 10:00:00',
-    },
-    {
-      id: '3',
-      key: 'pagination.pageSize',
-      name: '默认分页大小',
-      value: '20',
-      type: 'number',
-      description: '列表页面默认显示条数',
-      category: '界面设置',
-      isRequired: true,
-      isReadonly: false,
-      validation: {
-        min: 10,
-        max: 100,
-        message: '分页大小必须在10-100之间',
-      },
-      createdAt: '2023-01-01 00:00:00',
-      updatedAt: '2024-01-15 10:00:00',
-    },
-    {
-      id: '4',
-      key: 'notification.email.enabled',
-      name: '邮件通知',
-      value: 'true',
-      type: 'boolean',
-      description: '是否启用邮件通知功能',
-      category: '通知设置',
-      isRequired: false,
-      isReadonly: false,
-      createdAt: '2023-01-01 00:00:00',
-      updatedAt: '2024-01-15 10:00:00',
-    },
-  ];
+  // 移除mockSystemParams，直接使用从API获取的systemParams
 
   const mockBackupRecords: BackupRecord[] = [
     {
@@ -432,8 +409,151 @@ const Settings: React.FC = () => {
     }
   };
 
+  // 用户数据加载函数
+  const loadUsers = async () => {
+    try {
+      // setLoading(true);
+      const filters: UserFilters = {
+        search: searchTerm,
+        role: selectedRole || undefined,
+        status: selectedStatus || undefined
+      };
+      
+      const response = await getUsers(currentPage, 10, filters);
+      console.log('Users loaded:', response); // 临时日志
+      // setUsers(response.data);
+      // setTotalPages(response.totalPages);
+      // setTotalUsers(response.total);
+    } catch (error) {
+      console.error('加载用户列表失败:', error);
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  const loadUserStats = async () => {
+    try {
+      const stats = await getUserStats();
+      console.log('User stats loaded:', stats); // 临时日志
+      // setUserStats(stats);
+    } catch (error) {
+      console.error('加载用户统计失败:', error);
+    }
+  };
+
+  // 角色数据加载函数
+  const loadRoles = async () => {
+    try {
+      setRoleLoading(true);
+      const response = await getRoles(1, 100); // 获取所有角色
+      setRoles(response.data);
+    } catch (error) {
+      console.error('加载角色列表失败:', error);
+    } finally {
+      setRoleLoading(false);
+    }
+  };
+
+  const loadRoleStats = async () => {
+    try {
+      // const stats = await getRoleStats();
+      // setRoleStats(stats);
+    } catch (error) {
+      console.error('加载角色统计失败:', error);
+    }
+  };
+
+  const loadRolePermissions = async (roleId: string) => {
+    try {
+      const response = await getRolePermissions(roleId);
+      if (response.success && response.data) {
+        // 将权限数组转换为Record<string, boolean>格式
+        const permissionsMap: Record<string, boolean> = {};
+        if (Array.isArray(response.data)) {
+          response.data.forEach((permission: string) => {
+            permissionsMap[permission] = true;
+          });
+        }
+        setRolePermissions(permissionsMap);
+      }
+    } catch (error) {
+      console.error('加载角色权限失败:', error);
+    }
+  };
+
+  // 用户表单处理函数
+  // const handleUserFormChange = (field: keyof UserFormData, value: any) => {
+  //   const newFormData = { ...userFormData, [field]: value };
+  //   setUserFormData(newFormData);
+  //   
+  //   // 实时验证
+  //   const errors = validateUserForm(newFormData);
+  //   setUserFormErrors(errors);
+  // };
+
+  // const handleSaveUser = async () => {
+  //   try {
+  //     setIsSubmitting(true);
+  //     
+  //     // 验证表单
+  //     const errors = validateUserForm(userFormData);
+  //     if (hasFormErrors(errors)) {
+  //       setUserFormErrors(errors);
+  //       return;
+  //     }
+
+  //     // 构造用户数据，确保类型匹配
+  //     const userData = {
+  //       username: userFormData.username || '',
+  //       email: userFormData.email || '',
+  //       name: userFormData.name || '',
+  //       role: (userFormData.role as 'user' | 'admin' | 'manager') || 'user',
+  //       department: selectedDepartment || '默认部门'
+  //     };
+
+  //     if (editingUser) {
+  //       // 更新用户
+  //       await updateUser(editingUser.id, userData);
+  //     } else {
+  //       // 创建用户
+  //       await createUser(userData);
+  //     }
+
+  //     setIsUserDialogOpen(false);
+  //     await loadUsers();
+  //     await loadUserStats();
+  //   } catch (error) {
+  //     console.error('保存用户失败:', error);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+  // const handleDeleteUser = async (userId: string) => {
+  //   try {
+  //     await deleteUser(userId);
+  //     await loadUsers();
+  //     await loadUserStats();
+  //   } catch (error) {
+  //     console.error('删除用户失败:', error);
+  //   }
+  // };
+
+  // const handleToggleUserStatus = async (userId: string, currentStatus: string) => {
+  //   try {
+  //     const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+  //     await updateUserStatus(userId, newStatus);
+  //     await loadUsers();
+  //     await loadUserStats();
+  //   } catch (error) {
+  //     console.error('更新用户状态失败:', error);
+  //   }
+  // };
+
   const handleCreateUser = () => {
     setEditingUser(null);
+    // setUserFormData({});
+    // setUserFormErrors({});
     setIsUserDialogOpen(true);
   };
 
@@ -442,13 +562,77 @@ const Settings: React.FC = () => {
     setIsUserDialogOpen(true);
   };
 
+  // 角色表单处理函数
+  const handleRoleFormChange = (field: keyof RoleData | 'permissions', value: any) => {
+    setRoleFormData({ ...roleFormData, [field]: value });
+  };
+
+  const handleSaveRole = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      // 将 permissions 从 Record<string, boolean> 转换为 string[]
+      const permissionsArray = roleFormData.permissions 
+        ? Object.keys(roleFormData.permissions).filter(key => roleFormData.permissions![key])
+        : [];
+      
+      const roleDataForApi: RoleData = {
+        name: roleFormData.name,
+        description: roleFormData.description,
+        permissions: permissionsArray,
+        isSystem: roleFormData.isSystem
+      };
+      
+      if (editingRole) {
+        // 更新角色
+        await updateRole(editingRole.id, roleDataForApi);
+      } else {
+        // 创建角色
+        await createRole(roleDataForApi);
+      }
+
+      setIsRoleDialogOpen(false);
+      await loadRoles();
+      await loadRoleStats();
+    } catch (error) {
+      console.error('保存角色失败:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteRole = async (roleId: string) => {
+    try {
+      await deleteRole(roleId);
+      await loadRoles();
+      await loadRoleStats();
+    } catch (error) {
+      console.error('删除角色失败:', error);
+    }
+  };
+
+  const handleUpdateRolePermissions = async () => {
+    try {
+      if (selectedRoleForPermissions) {
+        // 将Record<string, boolean>转换为string[]格式
+        const permissionArray = Object.keys(rolePermissions).filter(key => rolePermissions[key]);
+        await updateRolePermissions(selectedRoleForPermissions, permissionArray);
+        await loadRoles();
+      }
+    } catch (error) {
+      console.error('更新角色权限失败:', error);
+    }
+  };
+
   const handleCreateRole = () => {
     setEditingRole(null);
+    setRoleFormData({ name: '', description: '' });
     setIsRoleDialogOpen(true);
   };
 
   const handleEditRole = (role: Role) => {
     setEditingRole(role);
+    setRoleFormData({ name: role.name, description: role.description });
     setIsRoleDialogOpen(true);
   };
 
@@ -457,9 +641,77 @@ const Settings: React.FC = () => {
     setIsParamDialogOpen(true);
   };
 
-  const handleEditParam = (param: SystemParameter) => {
+  const handleEditParam = (param: SystemParam) => {
     setEditingParam(param);
     setIsParamDialogOpen(true);
+  };
+
+  // 系统参数API调用函数
+  const loadSystemParams = async () => {
+    try {
+      // setParamLoading(true);
+      const queryParams: SystemParamQueryParams = {
+        // search: paramSearchTerm,
+        // category: selectedParamCategory
+      };
+      const response = await systemParamsService.getAllParams(queryParams);
+      setSystemParams(response.data.settings);
+    } catch (error) {
+      console.error('加载系统参数失败:', error);
+    } finally {
+      // setParamLoading(false);
+    }
+  };
+
+  // const loadParamCategories = async () => {
+  //   try {
+  //     const response = await systemParamsService.getCategories();
+  //     setParamCategories(response.data);
+  //   } catch (error) {
+  //     console.error('加载参数分类失败:', error);
+  //   }
+  // };
+
+  const handleSaveParam = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      if (editingParam) {
+        // 更新参数
+        await systemParamsService.updateParam(editingParam.key, paramFormData);
+      } else {
+        // 创建参数
+        await systemParamsService.createParam(paramFormData);
+      }
+
+      setIsParamDialogOpen(false);
+      await loadSystemParams();
+    } catch (error) {
+      console.error('保存系统参数失败:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteParam = async (paramKey: string) => {
+    try {
+      await systemParamsService.deleteParam(paramKey);
+      await loadSystemParams();
+    } catch (error) {
+      console.error('删除系统参数失败:', error);
+    }
+  };
+
+  const handleParamFormChange = (field: keyof SystemParamFormData, value: any) => {
+    const newFormData = { ...paramFormData, [field]: value };
+    setParamFormData(newFormData);
+    
+    // 简单验证
+    // const errors: Record<string, string> = {};
+    // if (!newFormData.key) errors.key = '参数键名不能为空';
+    // if (!newFormData.value) errors.value = '参数值不能为空';
+    // if (!newFormData.category) errors.category = '参数分类不能为空';
+    // setParamFormErrors(errors);
   };
 
   const handleCreateBackup = () => {
@@ -700,56 +952,71 @@ const Settings: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockRoles.map((role) => (
-                    <div key={role.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
+                  {roleLoading ? (
+                    <div className="text-center py-4">
+                      <RefreshCw className="h-6 w-6 animate-spin mx-auto" />
+                      <p className="text-sm text-muted-foreground mt-2">加载角色列表...</p>
+                    </div>
+                  ) : roles.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>暂无角色数据</p>
+                    </div>
+                  ) : (
+                    roles.map((role) => (
+                      <div key={role.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium">{role.name}</h4>
+                            {role.isSystem && (
+                              <Badge variant="secondary" className="text-xs">
+                                系统角色
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {role.description}
+                          </p>
+                        </div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-medium">{role.name}</h4>
-                          {role.isSystem && (
-                            <Badge variant="secondary" className="text-xs">
-                              系统角色
-                            </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditRole(role)}
+                            disabled={role.isSystem}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          {!role.isSystem && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="sm" className="text-red-600">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>确认删除</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    确定要删除角色 "{role.name}" 吗？此操作不可撤销。
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>取消</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    className="bg-red-600 hover:bg-red-700"
+                                    onClick={() => handleDeleteRole(role.id)}
+                                  >
+                                    删除
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {role.description}
-                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditRole(role)}
-                          disabled={role.isSystem}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        {!role.isSystem && (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm" className="text-red-600">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>确认删除</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  确定要删除角色 "{role.name}" 吗？此操作不可撤销。
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>取消</AlertDialogCancel>
-                                <AlertDialogAction className="bg-red-600 hover:bg-red-700">
-                                  删除
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -764,12 +1031,12 @@ const Settings: React.FC = () => {
                   <div className="text-sm text-muted-foreground">
                     选择角色查看其权限配置
                   </div>
-                  <Select>
+                  <Select value={selectedRoleForPermissions} onValueChange={setSelectedRoleForPermissions}>
                     <SelectTrigger>
                       <SelectValue placeholder="选择角色" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockRoles.map((role) => (
+                      {roles.map((role) => (
                         <SelectItem key={role.id} value={role.id}>
                           {role.name}
                         </SelectItem>
@@ -778,38 +1045,98 @@ const Settings: React.FC = () => {
                   </Select>
                   
                   {/* 权限表格 */}
-                  <div className="border rounded-lg">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>模块</TableHead>
-                          <TableHead className="text-center">查看</TableHead>
-                          <TableHead className="text-center">新增</TableHead>
-                          <TableHead className="text-center">编辑</TableHead>
-                          <TableHead className="text-center">删除</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {Object.entries(PERMISSION_MODULE_LABELS).map(([module, label]) => (
-                          <TableRow key={module}>
-                            <TableCell className="font-medium">{label}</TableCell>
-                            <TableCell className="text-center">
-                              <Checkbox checked={true} />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Checkbox checked={module !== 'dashboard'} />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Checkbox checked={module !== 'dashboard'} />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Checkbox checked={false} />
-                            </TableCell>
+                  {selectedRoleForPermissions ? (
+                    <div className="border rounded-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>模块</TableHead>
+                            <TableHead className="text-center">查看</TableHead>
+                            <TableHead className="text-center">新增</TableHead>
+                            <TableHead className="text-center">编辑</TableHead>
+                            <TableHead className="text-center">删除</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                        </TableHeader>
+                        <TableBody>
+                          {Object.entries(PERMISSION_MODULE_LABELS).map(([module, label]) => (
+                            <TableRow key={module}>
+                              <TableCell className="font-medium">{label}</TableCell>
+                              {Object.entries(PERMISSION_ACTION_LABELS).map(([action, _actionLabel]) => (
+                                <TableCell key={action} className="text-center">
+                                  <Checkbox 
+                                    checked={rolePermissions[`${module}_${action}`] || false}
+                                    onCheckedChange={(checked) => {
+                                      const permissionKey = `${module}_${action}`;
+                                      const updatedPermissions = {
+                                        ...rolePermissions,
+                                        [permissionKey]: checked
+                                      };
+                                      setRolePermissions(updatedPermissions);
+                                      handleUpdateRolePermissions();
+                                    }}
+                                    disabled={roles.find(r => r.id === selectedRoleForPermissions)?.isSystem}
+                                  />
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                      
+                      {/* 权限操作按钮 */}
+                      <div className="p-4 border-t bg-muted/50">
+                        <div className="flex items-center justify-between">
+                          <div className="text-sm text-muted-foreground">
+                            {roles.find(r => r.id === selectedRoleForPermissions)?.isSystem ? 
+                              '系统角色权限不可修改' : 
+                              '修改权限后将自动保存'
+                            }
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                const allPermissions: Record<string, boolean> = {};
+                                Object.keys(PERMISSION_MODULE_LABELS).forEach(module => {
+                                  Object.keys(PERMISSION_ACTION_LABELS).forEach(action => {
+                                    allPermissions[`${module}_${action}`] = true;
+                                  });
+                                });
+                                setRolePermissions(allPermissions);
+                                handleUpdateRolePermissions();
+                              }}
+                              disabled={roles.find(r => r.id === selectedRoleForPermissions)?.isSystem}
+                            >
+                              全选
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                const noPermissions: Record<string, boolean> = {};
+                                Object.keys(PERMISSION_MODULE_LABELS).forEach(module => {
+                                  Object.keys(PERMISSION_ACTION_LABELS).forEach(action => {
+                                    noPermissions[`${module}_${action}`] = false;
+                                  });
+                                });
+                                setRolePermissions(noPermissions);
+                                handleUpdateRolePermissions();
+                              }}
+                              disabled={roles.find(r => r.id === selectedRoleForPermissions)?.isSystem}
+                            >
+                              清空
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>请选择角色查看权限配置</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -884,11 +1211,11 @@ const Settings: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockSystemParams.map((param) => (
-                      <TableRow key={param.id}>
+                    {systemParams.map((param) => (
+                      <TableRow key={param.key}>
                         <TableCell>
                           <div>
-                            <div className="font-medium">{param.name}</div>
+                            <div className="font-medium">{param.key}</div>
                             <div className="text-sm text-muted-foreground">
                               {param.description}
                             </div>
@@ -901,8 +1228,8 @@ const Settings: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <div className="max-w-32 truncate">
-                            {param.type === 'boolean' ? (
-                              <Badge variant={param.value === 'true' ? 'default' : 'secondary'}>
+                            {param.type === 'BOOLEAN' ? (
+                                  <Badge variant={param.value === 'true' ? 'default' : 'secondary'}>
                                 {param.value === 'true' ? '启用' : '禁用'}
                               </Badge>
                             ) : (
@@ -912,22 +1239,15 @@ const Settings: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {SYSTEM_PARAM_TYPE_LABELS[param.type as keyof typeof SYSTEM_PARAM_TYPE_LABELS]}
+                            {SYSTEM_PARAM_TYPE_LABELS[param.type.toLowerCase() as keyof typeof SYSTEM_PARAM_TYPE_LABELS]}
                           </Badge>
                         </TableCell>
                         <TableCell>{param.category}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            {param.isRequired && (
-                              <Badge variant="destructive" className="text-xs">
-                                必需
-                              </Badge>
-                            )}
-                            {param.isReadonly && (
-                              <Badge variant="secondary" className="text-xs">
-                                只读
-                              </Badge>
-                            )}
+                            <Badge variant={param.isPublic ? 'default' : 'secondary'} className="text-xs">
+                              {param.isPublic ? '公开' : '私有'}
+                            </Badge>
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
@@ -936,11 +1256,11 @@ const Settings: React.FC = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleEditParam(param)}
-                              disabled={param.isReadonly}
+                              disabled={false}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            {!param.isRequired && (
+                            {true && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button variant="ghost" size="sm" className="text-red-600">
@@ -951,12 +1271,15 @@ const Settings: React.FC = () => {
                                   <AlertDialogHeader>
                                     <AlertDialogTitle>确认删除</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      确定要删除参数 "{param.name}" 吗？此操作不可撤销。
+                                      确定要删除参数 "{param.key}" 吗？此操作不可撤销。
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>取消</AlertDialogCancel>
-                                    <AlertDialogAction className="bg-red-600 hover:bg-red-700">
+                                    <AlertDialogAction 
+                                      className="bg-red-600 hover:bg-red-700"
+                                      onClick={() => handleDeleteParam(param.key)}
+                                    >
                                       删除
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
@@ -1456,9 +1779,9 @@ const Settings: React.FC = () => {
               <Button variant="outline" onClick={() => setIsUserDialogOpen(false)}>
                 取消
               </Button>
-              <Button>
+              <Button onClick={handleSaveParam} disabled={isSubmitting}>
                 <Save className="h-4 w-4 mr-2" />
-                保存
+                {isSubmitting ? '保存中...' : '保存'}
               </Button>
             </div>
           </div>
@@ -1479,16 +1802,22 @@ const Settings: React.FC = () => {
                 <Label htmlFor="roleName">角色名称</Label>
                 <Input
                   id="roleName"
+                  name="name"
                   placeholder="请输入角色名称"
-                  defaultValue={editingRole?.name}
+                  value={roleFormData.name}
+                  onChange={(e) => handleRoleFormChange('name', e.target.value)}
+                  disabled={editingRole?.isSystem}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="roleDescription">角色描述</Label>
                 <Input
                   id="roleDescription"
+                  name="description"
                   placeholder="请输入角色描述"
-                  defaultValue={editingRole?.description}
+                  value={roleFormData.description}
+                  onChange={(e) => handleRoleFormChange('description', e.target.value)}
+                  disabled={editingRole?.isSystem}
                 />
               </div>
             </div>
@@ -1497,35 +1826,84 @@ const Settings: React.FC = () => {
               <Label>权限配置</Label>
               <div className="border rounded-lg p-4">
                 <div className="space-y-4">
-                  {Object.entries(PERMISSION_MODULE_LABELS).map(([module, label]) => (
-                    <div key={module} className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Checkbox id={`module-${module}`} />
-                        <Label htmlFor={`module-${module}`} className="font-medium">
-                          {label}
-                        </Label>
+                  {Object.entries(PERMISSION_MODULE_LABELS).map(([module, label]) => {
+                    const modulePermissions = Object.keys(PERMISSION_ACTION_LABELS).map(action => `${module}_${action}`);
+                    const allModuleChecked = modulePermissions.every(perm => roleFormData.permissions?.[perm]);
+                    // const _someModuleChecked = modulePermissions.some(perm => roleFormData.permissions?.[perm]);
+                    
+                    return (
+                      <div key={module} className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Checkbox 
+                            id={`module-${module}`}
+                            checked={allModuleChecked}
+                            // Note: indeterminate state would need custom implementation
+                            onCheckedChange={(checked) => {
+                              const updatedPermissions = { ...(roleFormData.permissions || {}) };
+                              modulePermissions.forEach(perm => {
+                                updatedPermissions[perm] = checked as boolean;
+                              });
+                              setRoleFormData(prev => ({
+                                ...prev,
+                                permissions: updatedPermissions
+                              }));
+                            }}
+                            disabled={editingRole?.isSystem}
+                          />
+                          <Label htmlFor={`module-${module}`} className="font-medium">
+                            {label}
+                          </Label>
+                        </div>
+                        <div className="pl-6 grid grid-cols-4 gap-4">
+                          {Object.entries(PERMISSION_ACTION_LABELS).map(([action, actionLabel]) => {
+                            const permissionKey = `${module}_${action}`;
+                            return (
+                              <div key={action} className="flex items-center gap-2">
+                                <Checkbox 
+                                  id={`${module}-${action}`}
+                                  checked={roleFormData.permissions?.[permissionKey] || false}
+                                  onCheckedChange={(checked) => {
+                                    setRoleFormData(prev => ({
+                                      ...prev,
+                                      permissions: {
+                                        ...(prev.permissions || {}),
+                                        [permissionKey]: checked as boolean
+                                      }
+                                    }));
+                                  }}
+                                  disabled={editingRole?.isSystem}
+                                />
+                                <Label htmlFor={`${module}-${action}`} className="text-sm">
+                                  {actionLabel}
+                                </Label>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                      <div className="pl-6 grid grid-cols-4 gap-4">
-                        {Object.entries(PERMISSION_ACTION_LABELS).map(([action, actionLabel]) => (
-                          <div key={action} className="flex items-center gap-2">
-                            <Checkbox id={`${module}-${action}`} />
-                            <Label htmlFor={`${module}-${action}`} className="text-sm">
-                              {actionLabel}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
+            
+            {editingRole?.isSystem && (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <Lock className="h-4 w-4 inline mr-1" />
+                  系统角色不可修改名称、描述和权限配置
+                </p>
+              </div>
+            )}
             
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>
                 取消
               </Button>
-              <Button>
+              <Button 
+                onClick={handleSaveRole}
+                disabled={!roleFormData.name.trim() || editingRole?.isSystem}
+              >
                 <Save className="h-4 w-4 mr-2" />
                 保存
               </Button>
@@ -1548,23 +1926,27 @@ const Settings: React.FC = () => {
                 <Label htmlFor="paramName">参数名称</Label>
                 <Input
                   id="paramName"
+                  name="name"
                   placeholder="请输入参数名称"
-                  defaultValue={editingParam?.name}
+                  defaultValue={editingParam?.key}
+                  onChange={(e) => handleParamFormChange('key', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="paramKey">参数键名</Label>
                 <Input
                   id="paramKey"
+                  name="key"
                   placeholder="请输入参数键名"
                   defaultValue={editingParam?.key}
+                  onChange={(e) => handleParamFormChange('key', e.target.value)}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="paramType">参数类型</Label>
-                <Select defaultValue={editingParam?.type}>
+                <Select defaultValue={editingParam?.type} onValueChange={(value) => handleParamFormChange('type', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="选择类型" />
                   </SelectTrigger>
@@ -1581,8 +1963,10 @@ const Settings: React.FC = () => {
                 <Label htmlFor="paramCategory">参数分类</Label>
                 <Input
                   id="paramCategory"
+                  name="category"
                   placeholder="请输入参数分类"
                   defaultValue={editingParam?.category}
+                  onChange={(e) => handleParamFormChange('category', e.target.value)}
                 />
               </div>
             </div>
@@ -1590,32 +1974,37 @@ const Settings: React.FC = () => {
               <Label htmlFor="paramValue">参数值</Label>
               <Input
                 id="paramValue"
+                name="value"
                 placeholder="请输入参数值"
                 defaultValue={editingParam?.value}
+                onChange={(e) => handleParamFormChange('value', e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="paramDescription">参数描述</Label>
               <Textarea
                 id="paramDescription"
+                name="description"
                 placeholder="请输入参数描述"
                 defaultValue={editingParam?.description}
+                onChange={(e) => handleParamFormChange('description', e.target.value)}
               />
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="isRequired"
-                  checked={editingParam?.isRequired}
+                  id="isPublic"
+                  checked={editingParam?.isPublic}
                 />
-                <Label htmlFor="isRequired">必需参数</Label>
+                <Label htmlFor="isPublic">公开参数</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="isReadonly"
-                  checked={editingParam?.isReadonly}
+                  checked={false}
+                  disabled
                 />
-                <Label htmlFor="isReadonly">只读参数</Label>
+                <Label htmlFor="isReadonly">只读参数（暂不支持）</Label>
               </div>
             </div>
             <div className="flex justify-end gap-2">

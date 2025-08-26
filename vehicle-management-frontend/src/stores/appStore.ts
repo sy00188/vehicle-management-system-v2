@@ -19,7 +19,7 @@ interface AppState {
   setTheme: (theme: 'light' | 'dark') => void;
   setLanguage: (language: 'zh' | 'en') => void;
   setGlobalLoading: (loading: boolean) => void;
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
+  addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'createdAt'>) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
 }
@@ -32,6 +32,8 @@ interface Notification {
   duration?: number;
   timestamp?: number;
   read?: boolean;
+  createdAt: string;
+  data?: any;
 }
 
 export const useAppStore = create<AppState>()(
@@ -76,7 +78,7 @@ export const useAppStore = create<AppState>()(
       },
       
       // 添加通知
-      addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => {
+      addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'createdAt'>) => {
         const id = Math.random().toString(36).substr(2, 9);
         const duration = notification.duration || 5000;
         const newNotification: Notification = {
@@ -84,6 +86,7 @@ export const useAppStore = create<AppState>()(
           id,
           timestamp: Date.now(),
           duration,
+          createdAt: new Date().toISOString(),
         };
         
         set((state) => ({

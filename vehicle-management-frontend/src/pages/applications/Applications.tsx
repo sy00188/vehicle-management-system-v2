@@ -69,7 +69,7 @@ const Applications: React.FC = () => {
     try {
       // 真实API调用
       const statsData = await applicationService.getApplicationStats();
-      setStats(statsData as ApplicationStatsType);
+      setStats(statsData as unknown as ApplicationStatsType);
     } catch (err) {
       console.error('Error fetching stats:', err);
     }
